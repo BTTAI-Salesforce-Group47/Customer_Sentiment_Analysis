@@ -1,0 +1,167 @@
+Date	Availability DownTime Duration in hours	Count of Customers Affected	Regions Affected
+2024-01-01	2	26855	Japan, China, Europe
+2024-01-02	6	43613	Europe
+2024-01-03	12	46082	India, Australia, Japan
+2024-01-04	14	3150	Japan, China, Europe
+2024-01-05	7	4454	India, Australia, Japan
+2024-01-06	9	17499	India, Australia, Japan
+2024-01-07	17	28679	Japan, India, China
+2024-01-08	13	3646	Japan, China, Europe
+2024-01-09	12	38107	USA, India, Europe
+2024-01-10	14	44439	Europe
+2024-01-11	13	11534	China
+2024-01-12	21	48015	USA, India, Europe
+2024-01-13	16	13906	Europe
+2024-01-14	4	34002	USA, Australia, China
+2024-01-15	17	16249	India, Australia, Japan
+2024-01-16	7	5838	Europe, India, Australia
+2024-01-17	7	42324	Japan
+2024-01-18	16	16868	Japan, China, Europe
+2024-01-19	6	38219	USA, India, Europe
+2024-01-20	2	33891	Europe
+2024-01-21	18	3014	USA
+2024-01-22	4	9949	India, Australia, Japan
+2024-01-23	18	48213	Europe, India, Australia
+2024-01-24	9	34594	USA
+2024-01-25	7	3588	Japan, China, Europe
+2024-01-26	7	31478	Europe
+2024-01-27	9	44434	USA, India, Europe
+2024-01-28	13	47829	India
+2024-01-29	1	47212	Australia
+2024-01-30	19	15879	Australia
+2024-01-31	16	37572	Europe, India, Australia
+2024-02-01	19	29696	China
+2024-02-02	6	27197	Japan, China, Europe
+2024-02-03	8	42196	Europe, India, Australia
+2024-02-04	14	30764	India
+2024-02-05	8	14088	USA
+2024-02-06	18	12062	India
+2024-02-07	6	34199	USA
+2024-02-08	11	25209	India
+2024-02-09	18	5049	USA
+2024-02-10	18	43126	Japan
+2024-02-11	11	4890	USA, Japan
+2024-02-12	18	40163	Japan, China, Europe
+2024-02-13	4	46208	USA, Japan
+2024-02-14	18	35095	USA, Australia, China
+2024-02-15	7	16891	USA
+2024-02-16	5	33142	Europe, India, Australia
+2024-02-17	18	17301	Australia
+2024-02-18	6	6024	Australia
+2024-02-19	7	49679	USA, Australia, China
+2024-02-20	15	41284	USA, Japan
+2024-02-21	5	8828	USA, Japan
+2024-02-22	15	14026	USA, Australia, China
+2024-02-23	6	12650	Australia
+2024-02-24	8	41528	USA, Japan
+2024-02-25	8	35122	Europe
+2024-02-26	16	39673	Europe, India, Australia
+2024-02-27	19	17920	Australia
+2024-02-28	12	39340	Japan
+2024-02-29	12	48464	Europe
+2024-03-01	2	30512	USA
+2024-03-02	18	29912	Europe
+2024-03-03	13	691	India, Australia, Japan
+2024-03-04	16	27466	India, Australia, Japan
+2024-03-05	20	16159	Japan, China, Europe
+2024-03-06	5	32617	Japan
+2024-03-07	8	32638	USA, India, Europe
+2024-03-08	7	22545	USA
+2024-03-09	21	8345	China
+2024-03-10	13	13364	Australia
+2024-03-11	21	1591	Japan, India, China
+2024-03-12	2	2784	Japan
+2024-03-13	5	18649	Australia
+2024-03-14	8	40916	USA, Japan
+2024-03-15	18	44206	India
+2024-03-16	10	10065	Japan, China, Europe
+2024-03-17	13	11298	Australia
+2024-03-18	15	24569	India, Australia, Japan
+2024-03-19	18	41966	India
+2024-03-20	15	43053	Japan, China, Europe
+2024-03-21	13	5362	USA, Japan
+2024-03-22	5	22393	China
+2024-03-23	1	21319	Europe
+2024-03-24	11	7821	Japan, India, China
+2024-03-25	20	3464	USA, Japan
+2024-03-26	14	31204	USA, Australia, China
+2024-03-27	9	35499	Europe, India, Australia
+2024-03-28	2	39639	USA, Australia, China
+2024-03-29	14	48769	USA, Australia, China
+2024-03-30	13	24384	China
+2024-03-31	8	6992	India, Australia, Japan
+2024-04-01	19	22520	China
+2024-04-02	7	3252	India, Australia, Japan
+2024-04-03	2	19320	USA, Japan
+2024-04-04	15	25227	USA, Japan
+2024-04-05	8	48137	Japan, China, Europe
+2024-04-06	16	41483	USA, Japan
+2024-04-07	17	46360	USA, Australia, China
+2024-04-08	1	1986	Australia
+2024-04-09	1	34993	China
+2024-04-10	7	27742	USA
+2024-04-11	15	7775	USA, India, Europe
+2024-04-12	12	25959	USA, India, Europe
+2024-04-13	11	46021	India, Australia, Japan
+2024-04-14	5	18306	India, Australia, Japan
+2024-04-15	15	7473	Australia
+2024-04-16	2	46156	China
+2024-04-17	4	23844	China
+2024-04-18	20	34998	USA, India, Europe
+2024-04-19	7	5582	USA, India, Europe
+2024-04-20	18	30768	Europe, India, Australia
+2024-04-21	9	35201	China
+2024-04-22	13	10851	Japan, India, China
+2024-04-23	15	43839	Japan, China, Europe
+2024-04-24	7	12532	USA, India, Europe
+2024-04-25	13	48719	Europe, India, Australia
+2024-04-26	4	34509	USA, Australia, China
+2024-04-27	15	15286	Japan, China, Europe
+2024-04-28	2	30511	India
+2024-04-29	18	46807	Japan, China, Europe
+2024-04-30	16	10356	China
+2024-05-01	9	47308	Europe
+2024-05-02	1	17219	India
+2024-05-03	1	6669	China
+2024-05-04	6	49384	Europe
+2024-05-05	4	48261	Europe
+2024-05-06	19	7562	Japan
+2024-05-07	9	17194	Europe, India, Australia
+2024-05-08	19	27949	Japan, India, China
+2024-05-09	16	14648	Australia
+2024-05-10	10	15341	Japan
+2024-05-11	4	34860	Europe
+2024-05-12	2	25640	Japan
+2024-05-13	21	30484	India
+2024-05-14	11	27162	India
+2024-05-15	14	15674	USA, Japan
+2024-05-16	12	4647	USA, Japan
+2024-05-17	21	44053	Japan
+2024-05-18	11	10080	Japan
+2024-05-19	4	431	China
+2024-05-20	11	45860	Europe
+2024-05-21	3	38737	USA, India, Europe
+2024-05-22	15	13333	Europe
+2024-05-23	17	19515	Europe
+2024-05-24	20	34391	Australia
+2024-05-25	9	25928	Japan, India, China
+2024-05-26	1	18885	Europe, India, Australia
+2024-05-27	8	23820	USA, Japan
+2024-05-28	20	19383	Australia
+2024-05-29	12	22230	China
+2024-05-30	4	6405	USA, India, Europe
+2024-05-31	17	41047	China
+2024-06-01	6	28638	USA, Japan
+2024-06-02	10	35538	Japan, India, China
+2024-06-03	2	1334	USA, Japan
+2024-06-04	6	2299	USA
+2024-06-05	21	29694	Japan, China, Europe
+2024-06-06	19	23462	USA, Australia, China
+2024-06-07	3	15058	USA, Australia, China
+2024-06-08	7	26977	Japan
+2024-06-09	12	9383	Japan, India, China
+2024-06-10	2	2405	USA
+2024-06-11	17	15506	Japan, China, Europe
+2024-06-12	5	5193	USA, India, Europe
+2024-06-13	10	37092	China
+2024-06-14	16	28349	Japan, China, Europe
