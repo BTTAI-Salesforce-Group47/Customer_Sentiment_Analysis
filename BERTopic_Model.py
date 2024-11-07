@@ -1,6 +1,7 @@
 # %%
 import pandas as pd
-
+import sys
+print(sys.version)
 # %%
 data = pd.read_csv("clean-data/feedback_data_cleaned.csv")
 
@@ -27,5 +28,8 @@ topics, probs = topic_model.fit_transform(docs)
 topic_model.get_topic_info()
 
 
+# %%
+topic_model.get_topic(0)
 
-
+# %%
+topic_model.get_document_info(docs)
