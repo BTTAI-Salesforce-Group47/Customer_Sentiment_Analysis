@@ -15,6 +15,11 @@ feedback_data = pd.read_csv("Datasets/feedbackData.csv", sep="\t")
 
 print(feedback_data.head())
 
+
+# %%
+# Remove rows with missing reviews or ratings
+feedback_data = feedback_data.dropna(subset=['Feedback', 'Rating'])
+
 # %%
 print(feedback_data['Feedback'].dtype)
 
@@ -24,7 +29,7 @@ print(feedback_data['Feedback'].dtype)
 
 
 # %%
-# defined set outside of function to save time
+# remove rows with gibberish feedback
 english_words = set(words.words())
 
 
@@ -54,9 +59,7 @@ filtered_data['lem_feedback'] = filtered_data['Feedback'].apply(lemmatize_text)
 
 print(filtered_data.head())
 
-# %%
-# Remove records with null values in Feedback or Rating columns
-filtered_data = filtered_data.dropna(subset=['Feedback', 'Rating'])
 
 # %%
 filtered_data.to_csv('clean-data/feedback_data_cleaned.csv', index=False)
+print('Cleaning successful')
