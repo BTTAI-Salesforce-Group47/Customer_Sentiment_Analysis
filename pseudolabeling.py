@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # TODO: Create and load  the sample feedback data
-csv_file = 'clean-data/sample_feedback_data.csv'
+csv_file = 'clean-data/labeled_feedback.csv'
 
 # Check if the file exists
 if os.path.exists(csv_file):
