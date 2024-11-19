@@ -1,7 +1,10 @@
 import pandas as pd
 import os
 
-# TODO: Create and load  the sample feedback data
+'''
+summary:
+    This is a one-time use script we used to manuallylabel the feedback data.
+'''
 csv_file = 'clean-data/labeled_feedback.csv'
 
 # Check if the file exists
