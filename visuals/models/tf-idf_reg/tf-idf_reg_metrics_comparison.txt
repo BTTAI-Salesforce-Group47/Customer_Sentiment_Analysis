@@ -1,0 +1,13 @@
+Model Performance Comparison:
+
+Text-Only Model:
+Mean Squared Error: 6.6483
+Root Mean Squared Error: 2.5784
+Mean Absolute Error: 2.1630
+R² Score: 0.2742
+
+Combined Model (Text + Rating):
+Mean Squared Error: 0.7227
+Root Mean Squared Error: 0.8501
+Mean Absolute Error: 0.7140
+R² Score: 0.9211
