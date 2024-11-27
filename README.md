@@ -1,56 +1,96 @@
 # Customer_Sentiment_Analysis
 
-This project analyzes customer feedback and company data to achieve three main goals:
+This project analyzes Company B's customer feedback and Company A's lead data to identify high-value conversion opportunities and optimize outreach timing. The analysis combines sentiment analysis, topic modeling, and predictive analytics to provide actionable insights for Company A's marketing and sales teams.
 
-1.
-2.
-3.
+## Project Goals
 
-## Our Process
+1. Analyze Company B's customer sentiment to identify potential conversion opportunities
+2. Predict lead conversion probability using integrated feedback and CRM data
+3. Determine optimal outreach timing based on product availability metrics
+4. Provide actionable insights for Company A's marketing and sales teams
 
-## Key Files
+## Data Integration and Processing
 
-### Pseudolabeling
-- `pseudolabeling.py`: CLI interface to allow for manual labeling of sample feedback data
-- `pseudo_smapling.py` (misc_scripts): Generates sample of feedback data.
+### Database Setup and Management
+- `POSTGRES DB-LeadPrediction_outreach.sql`: Core database setup and queries
+  - Integrates Company B's customer reviews
+  - Stores Company B's product availability metrics
+  - Contains Company A's CRM lead data
+  - Implements SQL-based data streaming for analysis
 
+### Data Preparation
+- `data-cleaning/`: Scripts for data preprocessing and integration
+- `clean-data/`: Processed datasets ready for analysis
+- `MergeFeedbackLeads.ipynb`: Combines and aligns Company B's feedback with Company A's lead data
 
-### Data Cleaning and Prep
+## Analysis Components
 
-- `feedback_cleaning.ipynb` / `feedback_cleaning.py`: Takes raw feedback data and:
-  - Filters out non-English text
-  - Lemmatizes words (converts to base form)
-  - Removes stopwords
-  - Creates clean dataset for analysis
+### Sentiment Analysis Pipeline
+- `vader_sentiment_analysis.py`: Initial sentiment scoring using VADER
+- `TF_IDF_classification_model.py`: ML-based sentiment classification
+- `TF_IDF_regression_model.py`: Numerical sentiment prediction
+- `BERT_model_fine_tuned.py`: Advanced sentiment analysis using BERT
+  - Focuses on customers present in both feedback and leads data
+  - Generates sentiment scores for lead prioritization
 
-### Sentiment Analysis
+### Lead Conversion Analysis
+- `leadConversion.ipynb`: 
+  - Analyzes patterns in successful lead conversions
+  - Integrates sentiment data with lead information
+  - Identifies high-probability conversion opportunities
 
-- `vader_sentiment_analysis.py`: Uses VADER (lexicon-based system trained on social media text) to:
-  - Calculate basic sentiment scores for each feedback
-  - Generate visualizations of sentiment distribution
-  - Save results to CSV file
+### Outreach Timing Optimization
+- `prophet.ipynb`: Time series analysis for optimal outreach timing
+  - Analyzes product availability patterns
+  - Predicts optimal contact windows
+  - Considers customer sentiment trends
 
-### Topic Modeling
+### Topic Analysis
+- `BERTopic_Model.ipynb`: Advanced topic modeling
+  - Identifies key themes in customer feedback
+  - Groups similar feedback for targeted outreach
+  - Provides insights for marketing strategy
 
-- `BERTopic_Model.ipynb`: Applies BERTopic to:
-  - Find main topics in the feedback
-  - Group similar feedbacks together
-  - Create topic visualisations
-  - Show most common words per topic
+## Technical Implementation
 
-### Company Details
+### Database Integration
+All analysis components fetch data directly from PostgreSQL using SQL queries, ensuring:
+- Real-time data access
+- Consistent data state
+- Efficient data processing
+- Secure data handling
 
-- `companydetails.ipynb`: Handles company information like:
-  - Employee count
-  - Regions served
-  - Other company specific data
+### Required Packages
+- Database: `psycopg2`, `sqlalchemy`
+- Data Processing: `pandas`, `numpy`
+- NLP: `nltk`, `scikit-learn`, `transformers`
+- Sentiment Analysis: `vaderSentiment`, `bertopic`
+- Visualization: `matplotlib`, `seaborn`
+- Machine Learning: `scikit-learn`, `torch`
+- Time Series: `prophet`
 
-## Key Insights and decisions
+## Results and Deliverables
 
-## Required Packages
+### Analysis Outputs
+Located in `results/` and `visuals/` directories:
+- Sentiment distribution analysis
+- Lead conversion probability scores
+- Optimal outreach timing recommendations
+- Topic modeling insights
+- Model performance metrics
 
-- pandas
-- nltk
-- vadersentiment
-- bertopic
-- numpy
+### Documentation
+- Detailed methodology in notebooks
+- Model documentation in `logs/`
+- SQL query documentation in database files
+ 
+
+## Key Insights
+
+The analysis pipeline provides:
+- Prioritized lead lists based on sentiment and conversion probability
+- Optimal outreach timing recommendations
+- Topic-based customer segmentation
+- Actionable insights for marketing and sales strategies
+
+For detailed findings and recommendations, see the full report in `results/final_report.pdf`.

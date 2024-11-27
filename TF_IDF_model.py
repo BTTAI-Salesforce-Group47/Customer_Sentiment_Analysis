@@ -27,7 +27,7 @@ data = pd.read_csv('clean-data/labeled_feedback.csv')
 def map_sentiment(score):
     if score <= 4:
         return 'Negative'
-    elif 5 <= score <= 7:
+    elif score == 5:
         return 'Neutral'
     else:
         return 'Positive'
@@ -102,7 +102,7 @@ print(
 
 # %%
 # Create visuals
-Path("visuals/models/tf-idf_class").mkdir(parents=True, exist_ok=True)
+Path("visuals/tf-idf_class").mkdir(parents=True, exist_ok=True)
 
 # %%
 # classification reports
@@ -122,7 +122,7 @@ sns.heatmap(cm_text, annot=True, fmt='d', cmap='Blues',
 plt.title('Text-Only Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('Actual')
-plt.savefig('visuals/models/tf-idf_class/confusion_text_only.png')
+plt.savefig('visuals/tf-idf_class/confusion_text_only.png')
 plt.close()
 
 cm_combined = confusion_matrix(y_test_combined, y_pred_combined)
@@ -132,7 +132,7 @@ sns.heatmap(cm_combined, annot=True, fmt='d', cmap='Greens',
 plt.title('Combined Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('Actual')
-plt.savefig('visuals/models/tf-idf_class/confusion_combined.png')
+plt.savefig('visuals/tf-idf_class/confusion_combined.png')
 plt.close()
 
 # %%
@@ -155,7 +155,7 @@ plt.title('Sentiment Distribution: Actual vs Predictions')
 plt.xlabel('Sentiment')
 plt.ylabel('Count')
 plt.legend()
-plt.savefig('visuals/models/tf-idf_class/distribution_comparison.png')
+plt.savefig('visuals/tf-idf_class/distribution_comparison.png')
 plt.close()
 
 # %%
@@ -183,12 +183,12 @@ sns.barplot(x='Metric', y='Score', hue='Model', data=metrics_melted)
 plt.title('Model Performance Comparison')
 plt.ylim(0, 1)
 plt.legend(title='Model')
-plt.savefig('visuals/models/tf-idf_class/metrics_comparison.png')
+plt.savefig('visuals/tf-idf_class/metrics_comparison.png')
 plt.close()
 
 # %%
 # save metrics to a text file
-with open('visuals/models/tf-idf_class/metrics_comparison.txt', 'w') as f:
+with open('visuals/tf-idf_class/metrics_comparison.txt', 'w') as f:
     f.write("=== Text-Only Model Metrics ===\n")
     f.write(f"Accuracy: {metrics['Text-Only']['Accuracy']:.4f}\n")
     f.write(f"F1 Score: {metrics['Text-Only']['F1 Score']:.4f}\n")

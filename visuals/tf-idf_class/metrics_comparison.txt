@@ -1,0 +1,9 @@
+=== Text-Only Model Metrics ===
+Accuracy: 0.2000
+F1 Score: 0.1667
+ROC-AUC: 0.5035
+
+=== Combined Model Metrics ===
+Accuracy: 0.4000
+F1 Score: 0.2424
+ROC-AUC: 0.6389
