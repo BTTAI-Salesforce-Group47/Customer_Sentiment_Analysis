@@ -1,29 +1,28 @@
 # %%
-## TODO: review why model has such limited predictions for both numerical and classification 
 
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split, GridSearchCV, ParameterGrid, StratifiedShuffleSplit
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import (
-    accuracy_score, f1_score, roc_auc_score,
-    classification_report, confusion_matrix
-)
-from scipy.sparse import hstack, csr_matrix
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
+from imblearn.over_sampling import SMOTE
+from tqdm import tqdm
 
 # %%
-# Load data
-data = pd.read_csv('clean-data/labeled_feedback.csv')
+# Load and preprocess external datasets
+def load_and_preprocess_external_data():
+    print("Loading external reviews data...")
+    reviews_df = pd.read_csv('External_Datasets/reviews.csv')
+    reviews_df = reviews_df.rename(columns={'Review': 'Feedback'})
+    print("External data loaded successfully!")
+    return reviews_df
 
-# %%
 # Map numerical sentiment to categories
-
-
 def map_sentiment(score):
     if score <= 4:
         return 'Negative'
@@ -32,169 +31,300 @@ def map_sentiment(score):
     else:
         return 'Positive'
 
+# %%
+# Train models with GridSearch
+def train_model(X, y):
+    print("\n=== Training Model ===")
+    rf = RandomForestClassifier(random_state=42)
+    
+    # Calculate total iterations
+    param_grid = list(ParameterGrid(rf_params))
+    n_iter = len(param_grid) * 5  # 5 for 5-fold CV
+    print(f"Starting Grid Search with {n_iter} total iterations...")
+    print("This may take several minutes. Progress will be shown below:")
+    
+    # Setting verbose to show progress
+    grid_search = GridSearchCV(
+        rf, rf_params, cv=5, scoring='f1_macro', n_jobs=-1,
+        verbose=7
+    )
+    
+    # Fit the model
+    grid_search.fit(X, y)
+    print("\n=== Training Complete ===")
+    print(f"Best parameters found: {grid_search.best_params_}")
+    return grid_search.best_estimator_
 
+# %%
+# Evaluate models
+def evaluate_model(model, X_test, y_test, model_name):
+    y_pred = model.predict(X_test)
+    y_pred_proba = model.predict_proba(X_test)
+    
+    # Calculate metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred, average="macro")
+    roc_auc = roc_auc_score(y_test, y_pred_proba, multi_class="ovr")
+    class_report = classification_report(y_test, y_pred)
+    
+    # Print metrics
+    print(f"\n=== {model_name} Model Metrics ===")
+    print(f'Accuracy: {accuracy:.4f}')
+    print(f'F1 Score: {f1:.4f}')
+    print(f'ROC-AUC: {roc_auc:.4f}')
+    print("\nClassification Report:")
+    print(class_report)
+    
+    # Save metrics 
+    metrics_dir = Path('visuals/tf-idf_class')
+    metrics_dir.mkdir(parents=True, exist_ok=True)
+    
+    with open(metrics_dir / 'metrics_comparison.txt', 'w') as f:
+        f.write(f"=== {model_name} Model Metrics ===\n")
+        f.write(f'Accuracy: {accuracy:.4f}\n')
+        f.write(f'F1 Score: {f1:.4f}\n')
+        f.write(f'ROC-AUC: {roc_auc:.4f}\n\n')
+        f.write("Classification Report:\n")
+        f.write(class_report)
+        
+    return y_pred, y_pred_proba
+
+# %%
+# Visualization Functions
+def plot_confusion_matrix(y_test, y_pred, title, filename, label_encoder):
+    cm = confusion_matrix(y_test, y_pred)
+    plt.figure(figsize=(6, 4))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=label_encoder.classes_, 
+                yticklabels=label_encoder.classes_)
+    plt.title(title)
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.text(0.5, -0.1, f'Accuracy: {accuracy_score(y_test, y_pred):.2f}',
+             ha='center', va='center', transform=plt.gca().transAxes)
+    plt.savefig(f'visuals/tf-idf_class/{filename}.png')
+    plt.close()
+
+def plot_feature_importance(model, feature_names, title, output_path):
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[-20:]  # Top 20 features
+    plt.figure(figsize=(10, 6))
+    plt.title(f'Top 20 Most Important Features ({title})')
+    plt.barh(range(20), importances[indices], color='skyblue')
+    plt.yticks(range(20), [feature_names[i] for i in indices])
+    plt.xlabel('Importance Score')
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
+
+# %%
+# Predict new data
+def predict_new_data(model, vectorizer, label_encoder, data_path, text_column='Feedback'):
+    """
+    Predict sentiment for new data using the trained model
+    
+    Args:
+        model: Trained RandomForestClassifier
+        vectorizer: Fitted TfidfVectorizer
+        label_encoder: Fitted LabelEncoder
+        data_path: Path to CSV file containing new data
+        text_column: Name of the column containing text to analyze
+    
+    Returns:
+        DataFrame with original data plus predictions
+    """
+    print(f"Loading data from {data_path}...")
+    new_data = pd.read_csv(data_path)
+    
+    if text_column not in new_data.columns:
+        raise ValueError(f"Column '{text_column}' not found in the data. Available columns: {new_data.columns.tolist()}")
+    
+    print("Transforming text data...")
+    # Transform text using the fitted TF-IDF vectorizer
+    tfidf_features = vectorizer.transform(new_data[text_column])
+    
+    print("Making predictions...")
+
+    predictions = model.predict(tfidf_features)
+    probabilities = model.predict_proba(tfidf_features)
+    
+    # Add predictions to the original dataframe
+    new_data['predicted_sentiment'] = label_encoder.inverse_transform(predictions)
+    
+    # Add probability columns for each sentiment class
+    for i, class_name in enumerate(label_encoder.classes_):
+        new_data[f'{class_name}_probability'] = probabilities[:, i]
+
+    output_path = 'predictions/sentiment_predictions.csv'
+    Path('predictions').mkdir(parents=True, exist_ok=True)
+    new_data.to_csv(output_path, index=False)
+    print(f"\nPredictions saved to {output_path}")
+    
+    print("\nSample predictions:")
+    sample_cols = [text_column, 'predicted_sentiment'] + [col for col in new_data.columns if 'probability' in col]
+    print(new_data[sample_cols].head())
+    
+    return new_data
+
+# %%
+# Load data
+print("\n=== Loading Data ===")
+print("Loading labeled feedback data...")
+data = pd.read_csv('clean-data/labeled_feedback.csv')
+external_data = load_and_preprocess_external_data()
+
+# %%
+# Map numerical sentiment to categories
+print("\n=== Preprocessing Data ===")
+print("Mapping sentiment scores to categories...")
 data['sentiment'] = data['p_sentiment'].apply(map_sentiment)
-print("\nClass distribution:")
-print(data['sentiment'].value_counts())
+external_data['sentiment_source'] = 'external'
+data['sentiment_source'] = 'original'
 
 # %%
-# convert text to tf-idf features
+# Combine datasets
+combined_data = pd.concat([
+    data[['Feedback', 'sentiment', 'sentiment_source']],
+    external_data[['Feedback', 'Sentiment', 'sentiment_source']].rename(
+        columns={'Sentiment': 'sentiment'})
+], ignore_index=True)
+
+# %%
+# Convert text to TF-IDF features
+print("\n=== Creating TF-IDF Features ===")
+print("Converting text to TF-IDF features (this may take a few minutes)...")
 tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
-tfidf_features = tfidf.fit_transform(data['feedback_prepped'])
-print(f'TF-IDF shape: {tfidf_features.shape}')
+tfidf_features = tfidf.fit_transform(combined_data['Feedback'])
+print(f"Created {tfidf_features.shape[1]} TF-IDF features")
 
 # %%
-# scale ratings
-scaler = StandardScaler()
-scaled_ratings = scaler.fit_transform(data['Rating'].values.reshape(-1, 1))
-scaled_ratings_sparse = csr_matrix(scaled_ratings)
-
-# combine features for the combined model
-combined_features = hstack([tfidf_features, scaled_ratings_sparse])
-
-# %%
-# encode labels
+# Encode labels
+print("\n=== Encoding Labels ===")
 le = LabelEncoder()
-labels = le.fit_transform(data['sentiment'])
-print("\nEncoded classes:", le.classes_)
+labels = le.fit_transform(combined_data['sentiment'])
+print("Labels encoded successfully")
 
 # %%
-# split data for text-only model
-X_train_text, X_test_text, y_train_text, y_test_text = train_test_split(
-    tfidf_features, labels, test_size=0.2, random_state=42, stratify=labels
-)
+# Split data with a dynamic random state
+print("\n=== Splitting Data ===")
+random_seed = np.random.randint(1, 10000)  # Generate a random seed
+sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=random_seed)
+train_index, test_index = next(sss.split(tfidf_features, labels))
 
-# split data for combined model
-X_train_combined, X_test_combined, y_train_combined, y_test_combined = train_test_split(
-    combined_features, labels, test_size=0.2, random_state=42, stratify=labels
-)
+X_train_text = tfidf_features[train_index]
+X_test_text = tfidf_features[test_index]
+y_train_text = labels[train_index]
+y_test_text = labels[test_index]
+source_train = combined_data['sentiment_source'].iloc[train_index]
+source_test = combined_data['sentiment_source'].iloc[test_index].reset_index(drop=True)
 
-# %%
-# Train text-only model
-print("\n=== Text-Only Model ===")
-rf_text = RandomForestClassifier(n_estimators=100, random_state=42)
-rf_text.fit(X_train_text, y_train_text)
-
-# predict and evaluate text-only model
-y_pred_text = rf_text.predict(X_test_text)
-y_pred_proba_text = rf_text.predict_proba(X_test_text)
-print("\nText-only Model Metrics:")
-print(f'Accuracy: {accuracy_score(y_test_text, y_pred_text):.4f}')
-print(f'F1 Score: {f1_score(y_test_text, y_pred_text, average="macro"):.4f}')
-print(
-    f'ROC-AUC: {roc_auc_score(y_test_text, y_pred_proba_text, multi_class="ovr"):.4f}')
+print("Data split completed")
 
 # %%
-# train combined model
-print("\n=== Combined Model (Text + Rating) ===")
-rf_combined = RandomForestClassifier(n_estimators=100, random_state=42)
-rf_combined.fit(X_train_combined, y_train_combined)
-
-# predict and evaluate combined model
-y_pred_combined = rf_combined.predict(X_test_combined)
-y_pred_proba_combined = rf_combined.predict_proba(X_test_combined)
-print("\nCombined Model Metrics:")
-print(f'Accuracy: {accuracy_score(y_test_combined, y_pred_combined):.4f}')
-print(
-    f'F1 Score: {f1_score(y_test_combined, y_pred_combined, average="macro"):.4f}')
-print(
-    f'ROC-AUC: {roc_auc_score(y_test_combined, y_pred_proba_combined, multi_class="ovr"):.4f}')
+# Handle class imbalance using SMOTE with dynamic random state
+print("\n=== Handling Class Imbalance ===")
+print("Applying SMOTE to balance classes...")
+smote = SMOTE(random_state=random_seed)
+X_text_resampled, y_resampled = smote.fit_resample(X_train_text, y_train_text)
+print("Class balancing completed")
 
 # %%
-# Create visuals
-Path("visuals/tf-idf_class").mkdir(parents=True, exist_ok=True)
+# Hyperparameter tuning for Random Forest with more variation
+
+rf_params = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [10, 20, 30, None],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'class_weight': ['balanced', 'balanced_subsample'],
+    'max_features': ['sqrt', 'log2', None]
+}
 
 # %%
-# classification reports
-print("\n--- Text-Only Classification Report ---")
-print(classification_report(y_test_text, y_pred_text, target_names=le.classes_))
-
-print("\n--- Combined Classification Report ---")
-print(classification_report(y_test_combined,
-      y_pred_combined, target_names=le.classes_))
+# Train the model ONCE
+print("\n=== Training Model ===")
+best_model = train_model(X_text_resampled, y_resampled)
+print("Model training completed!")
 
 # %%
-# confusion matrices
-cm_text = confusion_matrix(y_test_text, y_pred_text)
-plt.figure(figsize=(6, 4))
-sns.heatmap(cm_text, annot=True, fmt='d', cmap='Blues',
-            xticklabels=le.classes_, yticklabels=le.classes_)
-plt.title('Text-Only Confusion Matrix')
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.savefig('visuals/tf-idf_class/confusion_text_only.png')
-plt.close()
-
-cm_combined = confusion_matrix(y_test_combined, y_pred_combined)
-plt.figure(figsize=(6, 4))
-sns.heatmap(cm_combined, annot=True, fmt='d', cmap='Greens',
-            xticklabels=le.classes_, yticklabels=le.classes_)
-plt.title('Combined Confusion Matrix')
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.savefig('visuals/tf-idf_class/confusion_combined.png')
-plt.close()
+# Get predictions and reuse them
+print("\n=== Evaluating Model ===")
+y_pred, y_pred_proba = evaluate_model(best_model, X_test_text, y_test_text, 'Text-Only')
 
 # %%
-# distribution comparison
+# Create visualizations
+print("\n=== Creating Visualizations ===")
+# Confusion matrix
+plot_confusion_matrix(y_test_text, y_pred, 'Text-Only Confusion Matrix', 'confusion_text_only', le)
+
+# Distribution comparison
 plt.figure(figsize=(10, 6))
-# map numeric labels back to sentiment labels
-y_test_labels = pd.Series(y_test_text).map(
-    {i: label for i, label in enumerate(le.classes_)})
-y_pred_text_labels = pd.Series(y_pred_text).map(
-    {i: label for i, label in enumerate(le.classes_)})
-y_pred_combined_labels = pd.Series(y_pred_combined).map(
-    {i: label for i, label in enumerate(le.classes_)})
-
-sns.countplot(x=y_test_labels, order=le.classes_, color='blue', label='Actual')
-sns.countplot(x=y_pred_text_labels, order=le.classes_,
-              color='red', alpha=0.6, label='Text-Only')
-sns.countplot(x=y_pred_combined_labels, order=le.classes_,
-              color='green', alpha=0.6, label='Combined')
+sns.countplot(x=pd.Series(y_test_text).map({i: label for i, label in enumerate(le.classes_)}), order=le.classes_, color='blue', label='Actual')
+sns.countplot(x=pd.Series(y_pred).map({i: label for i, label in enumerate(le.classes_)}), 
+              order=le.classes_, color='red', alpha=0.6, label='Predicted')
 plt.title('Sentiment Distribution: Actual vs Predictions')
 plt.xlabel('Sentiment')
 plt.ylabel('Count')
-plt.legend()
+plt.legend(title='Legend')
 plt.savefig('visuals/tf-idf_class/distribution_comparison.png')
 plt.close()
 
-# %%
-# metrics comparison
+# Metrics comparison
 metrics = {
     'Text-Only': {
-        'Accuracy': accuracy_score(y_test_text, y_pred_text),
-        'F1 Score': f1_score(y_test_text, y_pred_text, average='macro'),
-        'ROC-AUC': roc_auc_score(y_test_text, y_pred_proba_text, multi_class='ovr')
-    },
-    'Combined': {
-        'Accuracy': accuracy_score(y_test_combined, y_pred_combined),
-        'F1 Score': f1_score(y_test_combined, y_pred_combined, average='macro'),
-        'ROC-AUC': roc_auc_score(y_test_combined, y_pred_proba_combined, multi_class='ovr')
+        'Accuracy': accuracy_score(y_test_text, y_pred),
+        'F1 Score': f1_score(y_test_text, y_pred, average='macro'),
+        'ROC-AUC': roc_auc_score(y_test_text, y_pred_proba, multi_class='ovr')
     }
 }
 
-metrics_df = pd.DataFrame(metrics).T.reset_index().rename(
-    columns={'index': 'Model'})
-metrics_melted = metrics_df.melt(
-    id_vars='Model', var_name='Metric', value_name='Score')
+metrics_df = pd.DataFrame(metrics).T.reset_index().rename(columns={'index': 'Model'})
+metrics_melted = metrics_df.melt(id_vars='Model', var_name='Metric', value_name='Score')
 
 plt.figure(figsize=(10, 6))
 sns.barplot(x='Metric', y='Score', hue='Model', data=metrics_melted)
 plt.title('Model Performance Comparison')
 plt.ylim(0, 1)
+plt.xlabel('Performance Metric')
+plt.ylabel('Score')
 plt.legend(title='Model')
+for index, row in metrics_melted.iterrows():
+    plt.text(index, row['Score'] + 0.02, f"{row['Score']:.2f}",
+             ha='center', va='bottom')
 plt.savefig('visuals/tf-idf_class/metrics_comparison.png')
 plt.close()
 
-# %%
-# save metrics to a text file
-with open('visuals/tf-idf_class/metrics_comparison.txt', 'w') as f:
-    f.write("=== Text-Only Model Metrics ===\n")
-    f.write(f"Accuracy: {metrics['Text-Only']['Accuracy']:.4f}\n")
-    f.write(f"F1 Score: {metrics['Text-Only']['F1 Score']:.4f}\n")
-    f.write(f"ROC-AUC: {metrics['Text-Only']['ROC-AUC']:.4f}\n\n")
+# Feature importance
+feature_names = tfidf.get_feature_names_out()
+plot_feature_importance(best_model, feature_names, 'Text-Only Model',
+                        'visuals/tf-idf_class/feature_importance_text.png')
 
-    f.write("=== Combined Model Metrics ===\n")
-    f.write(f"Accuracy: {metrics['Combined']['Accuracy']:.4f}\n")
-    f.write(f"F1 Score: {metrics['Combined']['F1 Score']:.4f}\n")
-    f.write(f"ROC-AUC: {metrics['Combined']['ROC-AUC']:.4f}\n")
+print("\n=== All Done! ===")
+print("Model is trained and ready to use. We will use predict_new_data() to score new records.")
+
+# %%
+# Save example predictions
+print("\n=== Saving Example Predictions ===")
+print(f"Length of y_test_text: {len(y_test_text)}")
+print(f"Length of y_pred: {len(y_pred)}")
+
+if len(y_test_text) == len(y_pred):
+    # Create a DataFrame with the actual and predicted labels, and the review text
+    df_reviews = pd.DataFrame({
+        'Review_Text': combined_data['Feedback'].iloc[test_index].reset_index(drop=True),  
+        'Actual': y_test_text,
+        'Predicted': y_pred
+    })
+
+    # Map numerical labels to sentiment categories
+    label_map = {i: label for i, label in enumerate(le.classes_)}
+    df_reviews['Actual_Sentiment'] = df_reviews['Actual'].map(label_map)
+    df_reviews['Predicted_Sentiment'] = df_reviews['Predicted'].map(label_map)
+
+    # Sample 5 reviews for each sentiment category
+    sampled_reviews = df_reviews.groupby('Predicted_Sentiment', group_keys=False).apply(
+        lambda x: x.sample(min(len(x), 5))).reset_index(drop=True)
+
+    sampled_reviews.to_csv('visuals/tf-idf_class/sample_reviews.csv', index=False)
+else:
+    print("Arrays are not   the same length")

@@ -94,3 +94,10 @@ The analysis pipeline provides:
 - Actionable insights for marketing and sales strategies
 
 For detailed findings and recommendations, see the full report in `results/final_report.pdf`.
+
+
+## appendix
+
+### Sources
+`reviews.csv` - product reviews from kaggle dataset -  https://www.kaggle.com/datasets/prishasawhney/product-reviews/data
+`rotten-tomatoes_reviews.csv` - movie reviews from rotten tomatoes - https://www.kaggle.com/datasets/stefanoleone992/rotten-tomatoes-movies-and-critic-reviews-dataset

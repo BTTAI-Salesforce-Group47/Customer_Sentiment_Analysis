@@ -1,0 +1,16 @@
+Review_Text,Actual,Predicted,Actual_Sentiment,Predicted_Sentiment
+I regret buying this product. It's poorly made and doesn't work as advertised.,0,0,Negative,Negative
+I'm extremely dissatisfied with this product. It's cheaply made and doesn't function properly.,0,0,Negative,Negative
+I would not recommend this product. It's overpriced and doesn't work as advertised.,0,0,Negative,Negative
+Regret purchasing this product. It's of poor quality.,0,0,Negative,Negative
+"Avoid this company at all costs. The service is terrible, and the products are subpar.",0,0,Negative,Negative
+The service was average. Nothing particularly good or bad about it.,1,1,Neutral,Neutral
+"The product was decent, but it didn't meet all of my expectations.",1,1,Neutral,Neutral
+"The product was decent, but it didn't meet all of my expectations.",1,1,Neutral,Neutral
+"Not bad, but not great either. Just average.",1,1,Neutral,Neutral
+"The service was satisfactory. Nothing outstanding, but nothing terrible either.",1,1,Neutral,Neutral
+This product exceeded my expectations! It's high-quality and performs exceptionally well.,2,2,Positive,Positive
+Fantastic customer service! The representatives were knowledgeable and helpful.,2,2,Positive,Positive
+The customer service was exceptional! The representatives were friendly and helpful.,2,2,Positive,Positive
+Excellent customer support and fast response time!,2,2,Positive,Positive
+This product is outstanding! It's exactly what I was looking for and works perfectly.,2,2,Positive,Positive
