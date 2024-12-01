@@ -119,10 +119,13 @@ def main():
         f.write(feedback_df['text_sentiment_class'].value_counts().to_string())
         f.write("\n\nCombined Sentiment Classes:\n")
         f.write(feedback_df['combined_sentiment_class'].value_counts().to_string())
-    
+
+
+  """ Ran into some issues with seaborn  
+
     # Create visualizations
     plt.style.use('seaborn')
-    
+   
     # Bar plot of text sentiment classes
     plt.figure(figsize=(10, 6))
     sns.countplot(data=feedback_df, x='text_sentiment_class', order=['Negative', 'Neutral', 'Positive'])
@@ -157,6 +160,8 @@ def main():
     plt.tight_layout()
     plt.savefig(f'visuals/sentiment_comparison_{timestamp}.png')
     plt.close()
+
+"""
 
 if __name__ == "__main__":
     main()
