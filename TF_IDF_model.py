@@ -12,6 +12,7 @@ import seaborn as sns
 from pathlib import Path
 from imblearn.over_sampling import SMOTE
 from tqdm import tqdm
+import joblib
 
 # %%
 # Load and preprocess external datasets
@@ -230,14 +231,15 @@ print("Class balancing completed")
 
 # %%
 # Hyperparameter tuning for Random Forest with more variation
+## Noted tweaks made for better accuracy
 
 rf_params = {
-    'n_estimators': [100, 200, 300],
-    'max_depth': [10, 20, 30, None],
-    'min_samples_split': [2, 5, 10],
-    'min_samples_leaf': [1, 2, 4],
+    'n_estimators': [200, 300, 400],  # More trees for better accuracy
+    'max_depth': [15, 25, 35, None],  # Deeper trees to capture more complex patterns
+    'min_samples_split': [2, 5, 10],   
+    'min_samples_leaf': [1, 2, 3],  # Smaller leaf sizes for more detailed predictions
     'class_weight': ['balanced', 'balanced_subsample'],
-    'max_features': ['sqrt', 'log2', None]
+    'max_features': ['sqrt', 'log2', 0.5, None],  # Added fractional features
 }
 
 # %%
@@ -250,6 +252,15 @@ print("Model training completed!")
 # Get predictions and reuse them
 print("\n=== Evaluating Model ===")
 y_pred, y_pred_proba = evaluate_model(best_model, X_test_text, y_test_text, 'Text-Only')
+
+
+# Save the trained models
+print("\n=== Saving Models ===")
+Path("models").mkdir(exist_ok=True)
+joblib.dump(best_model, 'models/random_forest_model.joblib')
+joblib.dump(tfidf, 'models/tfidf_vectorizer.joblib')
+joblib.dump(le, 'models/label_encoder.joblib')
+print("Models saved successfully!")
 
 # %%
 # Create visualizations

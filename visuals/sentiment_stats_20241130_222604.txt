@@ -1,0 +1,14 @@
+Sentiment Class Distribution
+==========================
+
+Text-only Sentiment Classes:
+text_sentiment_class
+Neutral     57238
+Negative    40206
+Positive    35780
+
+Combined Sentiment Classes:
+combined_sentiment_class
+Positive    80161
+Negative    27121
+Neutral     25942
