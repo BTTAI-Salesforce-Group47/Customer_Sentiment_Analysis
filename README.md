@@ -40,9 +40,9 @@ This project analyzes Company B's customer feedback and Company A's lead data to
   - Identifies high-probability conversion opportunities
 
 ### Outreach Timing Optimization
-- `prophet.ipynb`: Time series analysis for optimal outreach timing
-  - Analyzes product availability patterns
-  - Predicts optimal contact windows
+- `timeseries.ipynb`: Time series analysis for optimal outreach timing
+  - Downtime Variability: The availability data shows significant fluctuations in service downtime
+  - The Prophet model allows for predicting future downtime patterns by considering historical data, customer impact, and downtime severity, enabling proactive planning for customer outreach.
   - Considers customer sentiment trends
 
 ### Topic Analysis
