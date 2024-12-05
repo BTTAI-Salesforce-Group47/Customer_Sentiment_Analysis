@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Grid, Paper, Typography, Card, CardContent } from '@mui/material';
+import { Box, Grid, Paper, Typography, Card, CardContent, CircularProgress } from '@mui/material';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import Papa from 'papaparse';
 
 const SentimentAnalysis = () => {
   const [sentimentTrends, setSentimentTrends] = useState([]);
@@ -13,37 +13,155 @@ const SentimentAnalysis = () => {
   const [loading, setLoading] = useState(true);
   const sections = useRef([]);
 
-  const pieData = [
-    { name: 'Positive', value: 60, color: '#748CAB' },
-    { name: 'Negative', value: 25, color: '#3E5C76' },
-    { name: 'Neutral', value: 15, color: '#F0EBD8' },
-  ];
-
   useEffect(() => {
-    const fetchData = async () => {
+    const loadData = async () => {
+      setLoading(true);
+      setError(null);
+      
       try {
-        setLoading(true);
-        const [trendsRes, categoryRes, comparisonRes, examplesRes] = await Promise.all([
-          axios.get('http://localhost:5001/api/sentiment/trends'),
-          axios.get('http://localhost:5001/api/sentiment/by-category'),
-          axios.get('http://localhost:5001/api/sentiment/comparison'),
-          axios.get('http://localhost:5001/api/sentiment/examples')
-        ]);
+        console.log('Fetching CSV data...');
+        const response = await fetch('/datasets/feedback_data_with_sentiment.csv');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+        }
         
-        setSentimentTrends(trendsRes.data);
-        setSentimentByCategory(categoryRes.data);
-        setComparisonData(comparisonRes.data);
-        setExamples(examplesRes.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to load data. Please try again later.');
+        const csvText = await response.text();
+        console.log('CSV data fetched, parsing...');
+        
+        Papa.parse(csvText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: 'greedy',
+          complete: function(results) {
+            if (results.errors.length > 0) {
+              console.error('Parse errors:', results.errors);
+            }
+            
+            console.log('Headers:', results.meta.fields);
+            console.log('First row:', results.data[0]);
+            console.log('Total rows:', results.data.length);
+            
+            // Filter out invalid rows and sample every 10th row
+            const validData = results.data.filter(row => 
+              row && 
+              typeof row.Feedback === 'string' && 
+              row.Feedback.trim() !== '' &&
+              typeof row.text_sentiment !== 'undefined'
+            );
+            
+            console.log('Valid rows:', validData.length);
+            
+            const sampledData = validData.filter((_, index) => index % 10 === 0);
+            console.log('Sampled rows:', sampledData.length);
+            
+            if (sampledData.length === 0) {
+              console.error('No valid data found after filtering');
+              return;
+            }
+            
+            // Process data for sentiment trends (by month)
+            const trendsByMonth = {};
+            sampledData.forEach(row => {
+              const date = new Date(row.Timestamp);
+              const month = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+              if (!trendsByMonth[month]) {
+                trendsByMonth[month] = { positive: 0, negative: 0, total: 0 };
+              }
+              trendsByMonth[month].total++;
+              if (parseFloat(row.text_sentiment) > 5) {
+                trendsByMonth[month].positive++;
+              } else {
+                trendsByMonth[month].negative++;
+              }
+            });
+
+            const trends = Object.entries(trendsByMonth).map(([month, counts]) => ({
+              month,
+              positive: (counts.positive / counts.total * 100).toFixed(1),
+              negative: (counts.negative / counts.total * 100).toFixed(1)
+            }));
+            setSentimentTrends(trends);
+
+            // Process data for sentiment by category
+            const categoryData = {};
+            sampledData.forEach(row => {
+              const category = row['Company Name'] || 'General';
+              if (!categoryData[category]) {
+                categoryData[category] = { positive: 0, negative: 0, total: 0 };
+              }
+              categoryData[category].total++;
+              if (parseFloat(row.text_sentiment) > 5) {
+                categoryData[category].positive++;
+              } else {
+                categoryData[category].negative++;
+              }
+            });
+
+            const categories = Object.entries(categoryData)
+              .filter(([_, counts]) => counts.total > 5) // Only show categories with more than 5 entries
+              .map(([name, counts]) => ({
+                name,
+                positive: (counts.positive / counts.total * 100).toFixed(1),
+                negative: (counts.negative / counts.total * 100).toFixed(1)
+              }));
+            setSentimentByCategory(categories);
+
+            // Process overall sentiment distribution
+            const totals = { positive: 0, negative: 0, neutral: 0, total: sampledData.length };
+            sampledData.forEach(row => {
+              const score = parseFloat(row.text_sentiment);
+              if (score > 6) totals.positive++;
+              else if (score < 4) totals.negative++;
+              else totals.neutral++;
+            });
+
+            const positivePercent = (totals.positive / totals.total) * 100;
+            const negativePercent = (totals.negative / totals.total) * 100;
+            const neutralPercent = (totals.neutral / totals.total) * 100;
+
+            setComparisonData({
+              text_positive: positivePercent,
+              text_negative: negativePercent,
+              text_neutral: neutralPercent,
+              combined_positive: positivePercent,
+              combined_negative: negativePercent,
+              combined_neutral: neutralPercent
+            });
+
+            // Update pie chart data
+            const pieData = [
+              { name: 'Positive', value: positivePercent, color: '#748CAB' },
+              { name: 'Negative', value: negativePercent, color: '#3E5C76' },
+              { name: 'Neutral', value: neutralPercent, color: '#F0EBD8' }
+            ];
+
+            // Set example reviews
+            setExamples(sampledData.slice(0, 5).map(row => ({
+              feedback_text: row.Feedback,
+              rating: row.Rating,
+              text_sentiment: parseFloat(row.text_sentiment),
+              combined_score: parseFloat(row.combined_sentiment),
+              classification: row.text_sentiment_class
+            })));
+          }
+        });
+      } catch (err) {
+        console.error('Error loading data:', err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    loadData();
   }, []);
+
+  // Update pie chart data based on comparison data
+  const pieData = comparisonData ? [
+    { name: 'Positive', value: comparisonData.text_positive, color: '#748CAB' },
+    { name: 'Negative', value: comparisonData.text_negative, color: '#3E5C76' },
+    { name: 'Neutral', value: comparisonData.text_neutral, color: '#F0EBD8' },
+  ] : [];
 
   useEffect(() => {
     const observerOptions = {
@@ -76,15 +194,16 @@ const SentimentAnalysis = () => {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Typography>Loading...</Typography>
+        <CircularProgress />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Typography color="error">{error}</Typography>
+      <Box sx={{ p: 3, color: 'error.main' }}>
+        <Typography variant="h6">Error loading data</Typography>
+        <Typography>{error}</Typography>
       </Box>
     );
   }
@@ -230,30 +349,20 @@ const SentimentAnalysis = () => {
             <Typography variant="h6" gutterBottom>
               Sentiment Analysis Comparison
             </Typography>
-            {comparisonData && (
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="subtitle1" color="primary" gutterBottom>
-                    Text-Based Analysis
-                  </Typography>
-                  <Box sx={{ mb: 2 }}>
-                    <Typography>Positive: {comparisonData.text_positive.toFixed(1)}%</Typography>
-                    <Typography>Negative: {comparisonData.text_negative.toFixed(1)}%</Typography>
-                    <Typography>Neutral: {comparisonData.text_neutral.toFixed(1)}%</Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="subtitle1" color="primary" gutterBottom>
-                    Combined Analysis (Text + Rating)
-                  </Typography>
-                  <Box sx={{ mb: 2 }}>
-                    <Typography>Positive: {comparisonData.combined_positive.toFixed(1)}%</Typography>
-                    <Typography>Negative: {comparisonData.combined_negative.toFixed(1)}%</Typography>
-                    <Typography>Neutral: {comparisonData.combined_neutral.toFixed(1)}%</Typography>
-                  </Box>
-                </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle1">Text-Based Analysis</Typography>
+                <Typography>Positive: {comparisonData ? `${comparisonData.text_positive.toFixed(1)}%` : 'N/A'}</Typography>
+                <Typography>Negative: {comparisonData ? `${comparisonData.text_negative.toFixed(1)}%` : 'N/A'}</Typography>
+                <Typography>Neutral: {comparisonData ? `${comparisonData.text_neutral.toFixed(1)}%` : 'N/A'}</Typography>
               </Grid>
-            )}
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle1">Combined Analysis (Text + Rating)</Typography>
+                <Typography>Positive: {comparisonData ? `${comparisonData.combined_positive.toFixed(1)}%` : 'N/A'}</Typography>
+                <Typography>Negative: {comparisonData ? `${comparisonData.combined_negative.toFixed(1)}%` : 'N/A'}</Typography>
+                <Typography>Neutral: {comparisonData ? `${comparisonData.combined_neutral.toFixed(1)}%` : 'N/A'}</Typography>
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
 
@@ -306,4 +415,4 @@ const SentimentAnalysis = () => {
   );
 };
 
-export default SentimentAnalysis; 
+export default SentimentAnalysis;
