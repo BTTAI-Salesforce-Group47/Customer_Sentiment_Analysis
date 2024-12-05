@@ -9,6 +9,7 @@ const Results = () => {
   const [regionalData, setRegionalData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [highPotentialLeads, setHighPotentialLeads] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -73,6 +74,30 @@ const Results = () => {
             { name: 'Negative', value: Math.round((parseInt(negative) / total) * 100), color: '#F44336' }
           ]);
         }
+
+        // Load high potential leads
+        const potentialResponse = await fetch('/visuals/high_potential_leads.csv');
+        const potentialText = await potentialResponse.text();
+        const potentialResults = await new Promise((resolve) => {
+          Papa.parse(potentialText, {
+            header: true,
+            dynamicTyping: true,
+            skipEmptyLines: 'greedy',
+            complete: resolve
+          });
+        });
+
+        // Process high potential leads
+        const processedLeads = potentialResults.data
+          .map(lead => ({
+            CompanyName: lead['Company Name'] || lead.CompanyName,
+            Score: (lead.conversion_probability * 100).toFixed(1) + '%',
+            Status: lead.Status
+          }))
+          .sort((a, b) => parseFloat(b.Score) - parseFloat(a.Score))
+          .slice(0, 5);
+        
+        setHighPotentialLeads(processedLeads);
 
         setLoading(false);
       } catch (error) {
@@ -211,7 +236,7 @@ const Results = () => {
           </Typography>
           <Typography variant="body1">
             Together, our models streamlined customer engagement, enabling data-driven decisions 
-            that improved lead conversion efficiency and customer satisfaction rates.
+            that improved lead conversion efficiency and customer satisfaction rates. Here's what we found:
           </Typography>
         </Paper>
       </section>
@@ -310,6 +335,49 @@ const Results = () => {
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Recommended Outreach Windows
+            </Typography>
+            <Box>
+              {outreachData.map((window, index) => (
+                <Card key={index} sx={{ mb: 2, backgroundColor: '#1D2D44' }}>
+                  <CardContent>
+                    <Typography variant="h6" color="primary">
+                      {window.date}
+                    </Typography>
+                    <Typography variant="body1">
+                      Optimal Score: {window.engagement}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Confidence Interval: ±{window.confidence}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              High Potential Leads
+            </Typography>
+            {highPotentialLeads.map((lead, index) => (
+              <Card key={index} sx={{ mb: 1, backgroundColor: '#1D2D44' }}>
+                <CardContent>
+                  <Typography variant="subtitle1">{lead.CompanyName}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Score: {lead.Score}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
           </Paper>
         </Grid>
       </Grid>
