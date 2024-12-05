@@ -1,98 +1,139 @@
 import React from 'react';
-import { Grid, Paper, Typography, Box } from '@mui/material';
+import { Grid, Paper, Typography, Box, Card, CardContent } from '@mui/material';
 import { Timeline, TimelineItem, TimelineContent, TimelineSeparator, TimelineDot, TimelineConnector } from '@mui/lab';
+import StorageIcon from '@mui/icons-material/Storage';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const BusinessOverview = () => {
-  const leadStatuses = [
-    { status: 'New', description: 'Lead just added to system, needs initial contact' },
-    { status: 'Contacted', description: 'Initial outreach made, awaiting response' },
-    { status: 'Qualified', description: 'Meets criteria for further engagement' },
-    { status: 'Proposal Sent', description: 'Formal proposal/quote delivered' },
-    { status: 'Negotiation', description: 'Active discussion of terms and conditions' },
-    { status: 'Closed Won/Lost', description: 'Final outcome determined' }
-  ];
-
   return (
     <div style={{ padding: '24px' }}>
       <Typography variant="h4" gutterBottom>
         Business Understanding
       </Typography>
-      
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Paper 
-            sx={{ 
-              p: 3,
-              backgroundColor: '#1D2D44',
-              borderRadius: 4,
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-              height: '100%'
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Lead Management Process
-            </Typography>
-            <Timeline position="right">
-              {leadStatuses.map((item, index) => (
-                <TimelineItem key={item.status}>
-                  <TimelineSeparator>
-                    <TimelineDot color="primary" />
-                    {index < leadStatuses.length - 1 && <TimelineConnector />}
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="subtitle1" color="primary">
-                        {item.status}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {item.description}
-                      </Typography>
-                    </Box>
-                  </TimelineContent>
-                </TimelineItem>
-              ))}
-            </Timeline>
-          </Paper>
+
+      {/* Project Objectives Section */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom>
+            Project Objectives
+          </Typography>
         </Grid>
-        
         <Grid item xs={12} md={6}>
-          <Paper 
-            sx={{ 
-              p: 3,
-              backgroundColor: '#1D2D44',
-              borderRadius: 4,
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-              height: '100%'
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Project Objectives
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="subtitle1" color="primary" gutterBottom>
-                1. Sentiment Analysis
+          <Card sx={{ height: '100%', backgroundColor: '#1D2D44' }}>
+            <CardContent>
+              <Box display="flex" alignItems="center" mb={2}>
+                <AnalyticsIcon sx={{ mr: 1 }} />
+                <Typography variant="h6">Sentiment Analysis & Lead Prioritization</Typography>
+              </Box>
+              <Typography variant="body2">
+                • Analyze customer feedback sentiment
+                • Identify high-potential leads
+                • Assess conversion probability
               </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
-                Analyze customer feedback to understand sentiment patterns and identify improvement areas.
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ height: '100%', backgroundColor: '#1D2D44' }}>
+            <CardContent>
+              <Box display="flex" alignItems="center" mb={2}>
+                <AccessTimeIcon sx={{ mr: 1 }} />
+                <Typography variant="h6">Predictive Outreach Timing</Typography>
+              </Box>
+              <Typography variant="body2">
+                • Determine optimal contact windows
+                • Consider product availability metrics
+                • Maximize engagement potential
               </Typography>
-
-              <Typography variant="subtitle1" color="primary" gutterBottom>
-                2. Lead Prioritization
-              </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
-                Score and rank leads based on sentiment analysis and other metrics to optimize conversion rates.
-              </Typography>
-
-              <Typography variant="subtitle1" color="primary" gutterBottom>
-                3. Optimal Outreach Timing
-              </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
-                Determine the best timing for lead engagement based on availability metrics and customer behavior patterns.
-              </Typography>
-            </Box>
-          </Paper>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
+
+      {/* Data Structure Section */}
+      <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44' }}>
+        <Box display="flex" alignItems="center" mb={2}>
+          <StorageIcon sx={{ mr: 1 }} />
+          <Typography variant="h6">Data Structure</Typography>
+        </Box>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4}>
+            <Card sx={{ backgroundColor: '#2C3E50' }}>
+              <CardContent>
+                <Typography variant="subtitle1" color="primary" gutterBottom>
+                  Availability Metrics
+                </Typography>
+                <Typography variant="body2">
+                  • Downtime duration
+                  • Affected customers
+                  • Regional impact
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={{ backgroundColor: '#2C3E50' }}>
+              <CardContent>
+                <Typography variant="subtitle1" color="primary" gutterBottom>
+                  CRM Data
+                </Typography>
+                <Typography variant="body2">
+                  • Lead information
+                  • Company details
+                  • Contact status
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={{ backgroundColor: '#2C3E50' }}>
+              <CardContent>
+                <Typography variant="subtitle1" color="primary" gutterBottom>
+                  Customer Feedback
+                </Typography>
+                <Typography variant="body2">
+                  • Sentiment data
+                  • Product ratings
+                  • Text feedback
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      {/* Lead Management Timeline */}
+      <Paper sx={{ p: 3, backgroundColor: '#1D2D44' }}>
+        <Typography variant="h6" gutterBottom>
+          Lead Management Process
+        </Typography>
+        <Timeline position="alternate">
+          {[
+            { status: 'New', description: 'Initial entry into system' },
+            { status: 'Contacted', description: 'First outreach made' },
+            { status: 'Qualified', description: 'Meets business criteria' },
+            { status: 'Proposal', description: 'Formal offer sent' },
+            { status: 'Negotiation', description: 'Active discussion' },
+            { status: 'Closed', description: 'Final outcome determined' }
+          ].map((item, index, arr) => (
+            <TimelineItem key={item.status}>
+              <TimelineSeparator>
+                <TimelineDot color="primary" />
+                {index < arr.length - 1 && <TimelineConnector sx={{ height: 80 }} />}
+              </TimelineSeparator>
+              <TimelineContent>
+                <Typography variant="subtitle1" color="primary">
+                  {item.status}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {item.description}
+                </Typography>
+              </TimelineContent>
+            </TimelineItem>
+          ))}
+        </Timeline>
+      </Paper>
     </div>
   );
 };

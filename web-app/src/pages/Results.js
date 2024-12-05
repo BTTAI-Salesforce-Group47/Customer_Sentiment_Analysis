@@ -175,7 +175,7 @@ const Results = () => {
             <TimelineItem>
               <TimelineSeparator>
                 <TimelineDot sx={{ backgroundColor: '#4CAF50' }} />
-                <TimelineConnector sx={{ height: 80 }} />
+                <TimelineConnector />
               </TimelineSeparator>
               <TimelineContent>
                 <Typography variant="h6">Sentiment Analysis</Typography>
@@ -185,7 +185,7 @@ const Results = () => {
             <TimelineItem>
               <TimelineSeparator>
                 <TimelineDot sx={{ backgroundColor: '#FFC107' }} />
-                <TimelineConnector sx={{ height: 80 }} />
+                <TimelineConnector />
               </TimelineSeparator>
               <TimelineContent>
                 <Typography variant="h6">Lead Scoring</Typography>
