@@ -156,6 +156,13 @@ const StartHere = () => {
                   <Typography variant="body1">
                     Classifying customer reviews to better understand their sentiment towards a product (99% accuracy).
                   </Typography>
+                  <Button 
+                    variant="contained" 
+                    onClick={() => navigate('/sentiment-analysis')}
+                    sx={{ mt: 2 }}
+                  >
+                    View Sentiment Analysis
+                  </Button>
                 </Paper>
               </Grid>
               
@@ -167,6 +174,13 @@ const StartHere = () => {
                   <Typography variant="body1">
                     Prioritizing high-value leads for conversion.
                   </Typography>
+                  <Button 
+                    variant="contained" 
+                    onClick={() => navigate('/lead-scoring')}
+                    sx={{ mt: 2 }}
+                  >
+                    View Lead Scoring
+                  </Button>
                 </Paper>
               </Grid>
               
@@ -178,6 +192,13 @@ const StartHere = () => {
                   <Typography variant="body1">
                     Optimizing engagement timing for maximum impact (91% accuracy).
                   </Typography>
+                  <Button 
+                    variant="contained" 
+                    onClick={() => navigate('/outreach-timing')}
+                    sx={{ mt: 2 }}
+                  >
+                    View Outreach Prediction
+                  </Button>
                 </Paper>
               </Grid>
             </Grid>

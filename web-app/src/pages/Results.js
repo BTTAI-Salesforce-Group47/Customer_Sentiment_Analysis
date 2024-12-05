@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Grid, Paper, Typography, Card, CardContent, Divider } from '@mui/material';
+import { Box, Grid, Paper, Typography, Card, CardContent, Divider, Button, ButtonGroup } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import Papa from 'papaparse';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
+import { useNavigate } from 'react-router-dom';
 
 const Results = () => {
+  const navigate = useNavigate();
   const [outreachData, setOutreachData] = useState([]);
   const [regionalData, setRegionalData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
@@ -163,12 +165,14 @@ const Results = () => {
     <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
       <section ref={(el) => (sections.current[0] = el)}>
         <Typography variant="h4" gutterBottom>
-          Results & Insights
+          Key Results & Insights
         </Typography>
         <Typography variant="h6" color="textSecondary" gutterBottom>
           How our models worked together to deliver actionable insights for Company A.
         </Typography>
+       
         
+
         {/* Key Achievements */}
         <Grid container spacing={2} sx={{ mb: 4 }}>
           {[
