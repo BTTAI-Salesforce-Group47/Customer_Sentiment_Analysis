@@ -1,0 +1,16 @@
+Review_Text,Actual,Predicted,Actual_Sentiment,Predicted_Sentiment
+Avoid this product. It's not worth it.,0,0,Negative,Negative
+"Avoid this company at all costs. The service is terrible, and the products are subpar.",0,0,Negative,Negative
+I had a terrible experience with this company. The customer service was rude and unhelpful.,0,0,Negative,Negative
+I would not recommend this product. It's overpriced and doesn't work as advertised.,0,0,Negative,Negative
+I regret buying this product. It's poorly made and doesn't work as advertised.,0,0,Negative,Negative
+"The product was decent. It worked fine, but it wasn't anything special.",1,1,Neutral,Neutral
+It's an okay product. Nothing to write home about.,1,1,Neutral,Neutral
+The service was average. Nothing particularly good or bad about it.,1,1,Neutral,Neutral
+"The service was satisfactory. Nothing outstanding, but nothing terrible either.",1,1,Neutral,Neutral
+"The product was decent. It worked fine, but it wasn't anything special.",1,1,Neutral,Neutral
+"It's functional, but there are better alternatives.",2,2,Positive,Positive
+This product exceeded my expectations! It's high-quality and performs exceptionally well.,2,2,Positive,Positive
+It's made our workflow so much easier!,2,2,Positive,Positive
+Fantastic customer service! The representatives were knowledgeable and helpful.,2,2,Positive,Positive
+Excellent product! Very satisfied.,2,2,Positive,Positive

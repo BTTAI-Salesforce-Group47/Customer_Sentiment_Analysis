@@ -1,27 +1,79 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { 
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, ScatterChart, Scatter
 } from 'recharts';
+import Papa from 'papaparse';
 
 const DataOverview = () => {
-  // Sample data from AvailabilityData.csv
-  const availabilityData = [
-    { date: '2024-01-01', downtime: 2, affected: 26855, regions: ['Japan', 'China', 'Europe'] },
-    { date: '2024-01-02', downtime: 6, affected: 43613, regions: ['Europe'] },
-    // ... more data
-  ];
+  const [availabilityData, setAvailabilityData] = useState([]);
+  const [regionData, setRegionData] = useState([]);
 
-  // Aggregate data by region
-  const regionData = [
-    { region: 'USA', companies: 245 },
-    { region: 'Europe', companies: 198 },
-    { region: 'Japan', companies: 187 },
-    { region: 'China', companies: 156 },
-    { region: 'India', companies: 178 },
-    { region: 'Australia', companies: 167 },
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Load availability data
+        const availabilityResponse = await fetch('/datasets/AvailabilityData.csv');
+        const availabilityText = await availabilityResponse.text();
+        console.log('Raw Availability Data:', availabilityText.slice(0, 200)); // Show first 200 chars
+        
+        Papa.parse(availabilityText, {
+          header: true,
+          complete: (results) => {
+            console.log('Parsed Availability Data:', results.data.slice(0, 2)); // Show first 2 rows
+            const transformedData = results.data
+              .filter(row => row.Date && row['Availability DownTime Duration in hours']) // Filter out empty rows
+              .map(row => ({
+                date: row.Date,
+                downtime: parseFloat(row['Availability DownTime Duration in hours']),
+                affected: parseInt(row['Count of Customers Affected']),
+                regions: (row['Regions Affected'] || '').split(',').map(region => region.trim())
+              }));
+            console.log('Transformed Availability Data:', transformedData.slice(0, 2)); // Show first 2 rows
+            setAvailabilityData(transformedData);
+          }
+        });
+
+        // Load company details data
+        const companyResponse = await fetch('/datasets/CompanyDetails.csv');
+        const companyText = await companyResponse.text();
+        console.log('Raw Company Data:', companyText.slice(0, 200)); // Show first 200 chars
+        
+        Papa.parse(companyText, {
+          header: true,
+          complete: (results) => {
+            console.log('Parsed Company Data:', results.data.slice(0, 2)); // Show first 2 rows
+            // Count companies per region
+            const regionCounts = {};
+            results.data.forEach(row => {
+              if (row['Region Served']) {
+                const regions = row['Region Served'].split(',').map(r => r.trim());
+                regions.forEach(region => {
+                  regionCounts[region] = (regionCounts[region] || 0) + 1;
+                });
+              }
+            });
+            
+            // Transform to chart format
+            const transformedRegionData = Object.entries(regionCounts)
+              .map(([region, companies]) => ({
+                region,
+                companies
+              }))
+              .filter(item => item.region && item.companies); // Remove any empty entries
+            
+            console.log('Transformed Region Data:', transformedRegionData); // Show all region data
+            setRegionData(transformedRegionData);
+          }
+        });
+      } catch (error) {
+        console.error('Error loading CSV data:', error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 

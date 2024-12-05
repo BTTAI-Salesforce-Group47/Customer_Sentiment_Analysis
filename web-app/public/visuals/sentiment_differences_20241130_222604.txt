@@ -1,0 +1,73 @@
+Examples where Text Sentiment differs from Combined Sentiment
+=====================================================
+
+Example 117538:
+Feedback: I've had a very disappointing experience with this product. It frequently crashes, causing significant disruptions to our work. The customer support has been unresponsive, leaving us to deal with issues on our own. The features are not as advertised, and the overall quality is far below what I expected. I regret choosing this product and will be looking for alternatives.
+Rating: 1
+Text-only sentiment: Neutral (score: 4.60)
+Combined sentiment: Negative (score: 3.82)
+--------------------------------------------------------------------------------
+
+Example 91002:
+Feedback: I've been thoroughly impressed by the level of detail and thought put into this product. The user experience is smooth and well-designed, making complex tasks feel simple and straightforward. The real-time collaboration features have revolutionized the way our team works together, especially since we're all remote. The frequent updates and new feature rollouts show a clear commitment to staying ahead of the competition. I highly recommend this to anyone looking for a reliable and forward-thinking solution.
+Rating: 9
+Text-only sentiment: Neutral (score: 5.38)
+Combined sentiment: Positive (score: 9.16)
+--------------------------------------------------------------------------------
+
+Example 107061:
+Feedback: Standard service, meets the minimum requirements.
+Rating: 6
+Text-only sentiment: Neutral (score: 5.27)
+Combined sentiment: Positive (score: 7.29)
+--------------------------------------------------------------------------------
+
+Example 6100:
+Feedback: Constant issues and poor performance.
+Rating: 4
+Text-only sentiment: Negative (score: 4.23)
+Combined sentiment: Neutral (score: 5.36)
+--------------------------------------------------------------------------------
+
+Example 42590:
+Feedback: ADF Wkdfkebfb
+Rating: 10
+Text-only sentiment: Neutral (score: 5.82)
+Combined sentiment: Positive (score: 10.08)
+--------------------------------------------------------------------------------
+
+Example 63826:
+Feedback: I've been thoroughly impressed by the level of detail and thought put into this product. The user experience is smooth and well-designed, making complex tasks feel simple and straightforward. The real-time collaboration features have revolutionized the way our team works together, especially since we're all remote. The frequent updates and new feature rollouts show a clear commitment to staying ahead of the competition. I highly recommend this to anyone looking for a reliable and forward-thinking solution.
+Rating: 7
+Text-only sentiment: Neutral (score: 5.38)
+Combined sentiment: Positive (score: 7.96)
+--------------------------------------------------------------------------------
+
+Example 34623:
+Feedback: aefoewr
+Rating: 5
+Text-only sentiment: Neutral (score: 5.82)
+Combined sentiment: Positive (score: 7.08)
+--------------------------------------------------------------------------------
+
+Example 56837:
+Feedback: It's adequate for basic needs.
+Rating: 5
+Text-only sentiment: Neutral (score: 5.68)
+Combined sentiment: Positive (score: 6.97)
+--------------------------------------------------------------------------------
+
+Example 97833:
+Feedback: Standard service, meets the minimum requirements.
+Rating: 6
+Text-only sentiment: Neutral (score: 5.27)
+Combined sentiment: Positive (score: 7.29)
+--------------------------------------------------------------------------------
+
+Example 58452:
+Feedback: It's adequate for basic needs.
+Rating: 5
+Text-only sentiment: Neutral (score: 5.68)
+Combined sentiment: Positive (score: 6.97)
+--------------------------------------------------------------------------------
+
