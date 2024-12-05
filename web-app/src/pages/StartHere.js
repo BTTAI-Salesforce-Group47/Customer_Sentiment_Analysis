@@ -8,18 +8,18 @@ const StartHere = () => {
 
   const sections = [
     {
-      title: 'About Our Team',
-      content: 'We are a team of data scientists and developers passionate about helping businesses understand and improve their customer relationships through advanced sentiment analysis.',
+      title: ' Our Team',
+      content: 'We are a team of 3 Machine Learning students under BreakthroughTech AI at MIT. We\'re working with our Salesforce challenge advisor to build a SAAS Customer Sentiment Analysis platform using ML',
       icon: <Business sx={{ fontSize: 40, color: '#748CAB' }} />
     },
     {
       title: 'Project Overview',
-      content: 'Our platform combines machine learning with traditional analytics to provide deep insights into customer sentiment, helping businesses make data-driven decisions.',
+      content: 'Our platform uses various Machine Learning models to provide insights into customer sentiment and optimal outreach timing, helping businesses make data-driven decisions.',
       icon: <Assessment sx={{ fontSize: 40, color: '#748CAB' }} />
     },
     {
       title: 'How to Navigate',
-      content: 'Start with the Data Overview to understand our dataset, then explore Business Overview for context. Use Analytics for detailed sentiment analysis and insights.',
+      content: 'Start with the Data Overview to understand our dataset, then explore Business Overview for context. View Analytics for a detailed look at our models and results.',
       icon: <Timeline sx={{ fontSize: 40, color: '#748CAB' }} />
     }
   ];
@@ -27,10 +27,10 @@ const StartHere = () => {
   return (
     <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
       <Typography variant="h4" gutterBottom>
-        Welcome to Customer Sentiment Analysis
+        BTTAI Group 47 | SAAS Customer Sentiment Analysis
       </Typography>
       <Typography variant="body1" paragraph sx={{ mb: 4 }}>
-        Discover insights from customer feedback and improve your business decisions
+        Discover insights into who to reach out to, when to reach out, and why to reach out.  
       </Typography>
 
       <Grid container spacing={4}>
@@ -73,7 +73,7 @@ const StartHere = () => {
                     1. Explore Our Demo
                   </Typography>
                   <Typography variant="body2" paragraph>
-                    Start with our pre-loaded dataset to see the power of our analysis tools:
+                    Start with our pre-loaded dataset to see what our models are working with:
                   </Typography>
                   <Button 
                     variant="contained" 
@@ -97,14 +97,14 @@ const StartHere = () => {
                     2. Analyze Insights
                   </Typography>
                   <Typography variant="body2" paragraph>
-                    Dive deep into sentiment analysis and discover actionable insights:
+                    Take a closer look at our variousmodels and results:
                   </Typography>
                   <Button 
                     variant="contained" 
                     onClick={() => navigate('/sentiment-analysis')}
                     sx={{ mr: 2, mb: 1 }}
                   >
-                    View Analysis
+                    View Analyses
                   </Button>
                   <Button 
                     variant="outlined" 
