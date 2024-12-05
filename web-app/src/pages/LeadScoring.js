@@ -1,154 +1,172 @@
-import React, { useEffect, useRef } from 'react';
-import { Box, Grid, Paper, Typography, Card, CardContent, Rating } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import React, { useEffect, useState } from 'react';
+import { Box, Grid, Paper, Typography, CircularProgress } from '@mui/material';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import Papa from 'papaparse';
 
 const LeadScoring = () => {
-  const leadScores = [
-    { name: 'High Priority', score: 85, count: 45 },
-    { name: 'Medium Priority', score: 65, count: 78 },
-    { name: 'Low Priority', score: 35, count: 32 },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [statusDistribution, setStatusDistribution] = useState([]);
+  const [monthlyTrends, setMonthlyTrends] = useState([]);
+  const [conversionRate, setConversionRate] = useState(null);
 
-  const leadMetrics = [
-    { subject: 'Engagement', A: 85, fullMark: 100 },
-    { subject: 'Sentiment', A: 75, fullMark: 100 },
-    { subject: 'Budget Match', A: 90, fullMark: 100 },
-    { subject: 'Need Match', A: 80, fullMark: 100 },
-    { subject: 'Authority', A: 70, fullMark: 100 },
-    { subject: 'Timeline', A: 85, fullMark: 100 },
-  ];
-
-  const sections = useRef([]);
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
   useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1,
+    const loadData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        console.log('Fetching leads data...');
+        const response = await fetch('/datasets/LeadsData.csv');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+        }
+        
+        const csvText = await response.text();
+        console.log('CSV data fetched, parsing...');
+        
+        Papa.parse(csvText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: 'greedy',
+          complete: function(results) {
+            console.log('Total leads:', results.data.length);
+            
+            // Process status distribution
+            const statusCounts = {};
+            results.data.forEach(row => {
+              const status = row.Status || 'Unknown';
+              statusCounts[status] = (statusCounts[status] || 0) + 1;
+            });
+            
+            const distribution = Object.entries(statusCounts)
+              .map(([name, value]) => ({ name, value }))
+              .sort((a, b) => b.value - a.value);
+            
+            setStatusDistribution(distribution);
+            
+            // Process monthly trends
+            const monthlyData = {};
+            results.data.forEach(row => {
+              if (!row.Date) return;
+              const date = new Date(row.Date);
+              const month = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+              
+              if (!monthlyData[month]) {
+                monthlyData[month] = { month, total: 0, qualified: 0, closed: 0 };
+              }
+              
+              monthlyData[month].total++;
+              if (row.Status === 'Qualified') monthlyData[month].qualified++;
+              if (row.Status === 'Closed-Won') monthlyData[month].closed++;
+            });
+            
+            const trends = Object.values(monthlyData)
+              .sort((a, b) => new Date(a.month) - new Date(b.month));
+            
+            setMonthlyTrends(trends);
+            
+            // Calculate conversion rate
+            const totalLeads = results.data.length;
+            const closedWon = results.data.filter(row => row.Status === 'Closed-Won').length;
+            setConversionRate((closedWon / totalLeads * 100).toFixed(1));
+            
+          }
+        });
+      } catch (err) {
+        console.error('Error loading data:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    sections.current.forEach((section) => {
-      if (section) {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(20px)';
-        section.style.transition = 'all 0.6s ease-out';
-        observer.observe(section);
-      }
-    });
-
-    return () => observer.disconnect();
+    loadData();
   }, []);
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3, color: 'error.main' }}>
+        <Typography variant="h6">Error loading data</Typography>
+        <Typography>{error}</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
-      <section ref={(el) => (sections.current[0] = el)}>
-        <Typography variant="h4" gutterBottom>
-          Lead Scoring
-        </Typography>
-        <Typography variant="body1" paragraph>
-          Our lead scoring system combines sentiment analysis with traditional metrics to prioritize leads effectively.
-        </Typography>
-      </section>
-
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6} ref={(el) => (sections.current[1] = el)}>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>Lead Scoring Dashboard</Typography>
+      
+      {/* Overview Cards */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Lead Score Distribution
-            </Typography>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={leadScores}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#3E5C76" opacity={0.3} />
-                <XAxis dataKey="name" stroke="#F0EBD8" />
-                <YAxis stroke="#F0EBD8" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1D2D44',
-                    border: 'none',
-                    borderRadius: 8,
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="score" fill="#748CAB" />
-                <Bar dataKey="count" fill="#3E5C76" />
-              </BarChart>
-            </ResponsiveContainer>
+            <Typography variant="h6">Conversion Rate</Typography>
+            <Typography variant="h4">{conversionRate}%</Typography>
+            <Typography variant="body2">of leads converted to customers</Typography>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Charts */}
+      <Grid container spacing={3}>
+        {/* Lead Status Distribution */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
+            <Typography variant="h6" gutterBottom>Lead Status Distribution</Typography>
+            <Box sx={{ height: 400 }}>
+              <ResponsiveContainer>
+                <PieChart>
+                  <Pie
+                    data={statusDistribution}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {statusDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6} ref={(el) => (sections.current[2] = el)}>
+        {/* Monthly Trends */}
+        <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Lead Quality Metrics
-            </Typography>
-            <ResponsiveContainer width="100%" height={400}>
-              <RadarChart data={leadMetrics}>
-                <PolarGrid stroke="#3E5C76" />
-                <PolarAngleAxis dataKey="subject" stroke="#F0EBD8" />
-                <PolarRadiusAxis stroke="#F0EBD8" />
-                <Radar name="Lead Quality" dataKey="A" stroke="#748CAB" fill="#748CAB" fillOpacity={0.6} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1D2D44',
-                    border: 'none',
-                    borderRadius: 8,
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-                  }}
-                />
-                <Legend />
-              </RadarChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} ref={(el) => (sections.current[3] = el)}>
-          <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Scoring Criteria
-            </Typography>
-            <Grid container spacing={2}>
-              {[
-                {
-                  title: 'Sentiment Score',
-                  description: 'Based on customer feedback analysis',
-                  rating: 4
-                },
-                {
-                  title: 'Engagement Level',
-                  description: 'Interaction frequency and quality',
-                  rating: 5
-                },
-                {
-                  title: 'Budget Alignment',
-                  description: 'Match with product pricing',
-                  rating: 3
-                }
-              ].map((criterion, index) => (
-                <Grid item xs={12} md={4} key={index}>
-                  <Card sx={{ backgroundColor: '#0D1321', height: '100%' }}>
-                    <CardContent>
-                      <Typography variant="h6" color="primary" gutterBottom>
-                        {criterion.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" paragraph>
-                        {criterion.description}
-                      </Typography>
-                      <Rating value={criterion.rating} readOnly />
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+            <Typography variant="h6" gutterBottom>Monthly Lead Trends</Typography>
+            <Box sx={{ height: 400 }}>
+              <ResponsiveContainer>
+                <BarChart data={monthlyTrends}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="total" name="Total Leads" fill="#8884d8" />
+                  <Bar dataKey="qualified" name="Qualified" fill="#82ca9d" />
+                  <Bar dataKey="closed" name="Closed Won" fill="#ffc658" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
       </Grid>
@@ -156,4 +174,4 @@ const LeadScoring = () => {
   );
 };
 
-export default LeadScoring; 
+export default LeadScoring;
