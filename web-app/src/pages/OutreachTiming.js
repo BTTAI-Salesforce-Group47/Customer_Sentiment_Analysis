@@ -86,6 +86,14 @@ const OutreachTiming = () => {
         Outreach Timing Analysis
       </Typography>
 
+      <Typography variant="h6" gutterBottom>
+        Predicting the best times to engage with customers for maximum impact.
+      </Typography>
+
+      <Typography variant="body1" gutterBottom>
+        This analysis leverages a combination of models, including Facebook's Prophet for time series forecasting and LSTM neural networks, to predict optimal outreach times. The models analyze historical availability data and customer engagement patterns to identify the best times for customer outreach.
+      </Typography>
+
       <Grid container spacing={3}>
         {/* System Availability vs. Engagement */}
         <Grid item xs={12}>
@@ -174,6 +182,17 @@ const OutreachTiming = () => {
                 </Card>
               ))}
             </Box>
+          </Paper>
+        </Grid>
+
+        {/* Add Visualizations */}
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Visualizations
+            </Typography>
+            <img src="/visuals/outreach_timing_components.png" alt="Forecast Components" style={{ width: '100%' }} />
+            <img src="/visuals/outreach_timing_forecast.png" alt="Forecast Visualization" style={{ width: '100%', marginTop: '20px' }} />
           </Paper>
         </Grid>
       </Grid>

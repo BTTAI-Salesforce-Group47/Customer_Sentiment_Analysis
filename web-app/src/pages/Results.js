@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Box, Grid, Paper, Typography, Card, CardContent, Divider } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import Papa from 'papaparse';
+import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 
 const Results = () => {
   const [outreachData, setOutreachData] = useState([]);
@@ -58,14 +59,14 @@ const Results = () => {
         setRegionalData(processedRegional);
 
         // Load sentiment stats
-        const sentimentResponse = await fetch('/visuals/sentiment_stats_20241130_222604.txt');
+        const sentimentResponse = await fetch('/visuals/sentiment_stats_20241130_214016.txt');
         const sentimentText = await sentimentResponse.text();
         
         // Parse sentiment distribution
-        const sentimentMatch = sentimentText.match(/Neutral\s+(\d+)\nNegative\s+(\d+)\nPositive\s+(\d+)/);
+        const sentimentMatch = sentimentText.match(/Combined Sentiment Classes:\ncombined_sentiment_class\nPositive\s+(\d+)\nNeutral\s+(\d+)\nNegative\s+(\d+)/);
         if (sentimentMatch) {
-          const [_, neutral, negative, positive] = sentimentMatch;
-          const total = parseInt(neutral) + parseInt(negative) + parseInt(positive);
+          const [_, positive, neutral, negative] = sentimentMatch;
+          const total = parseInt(positive) + parseInt(neutral) + parseInt(negative);
           setSentimentData([
             { name: 'Positive', value: Math.round((parseInt(positive) / total) * 100), color: '#4CAF50' },
             { name: 'Neutral', value: Math.round((parseInt(neutral) / total) * 100), color: '#FFC107' },
@@ -139,9 +140,80 @@ const Results = () => {
         <Typography variant="h4" gutterBottom>
           Results & Insights
         </Typography>
-        <Typography variant="body1" paragraph>
-          Analysis of customer sentiment patterns and engagement metrics across regions.
+        <Typography variant="h6" color="textSecondary" gutterBottom>
+          How our models worked together to deliver actionable insights for Company A.
         </Typography>
+        
+        {/* Key Achievements */}
+        <Grid container spacing={2} sx={{ mb: 4 }}>
+          {[
+            { title: 'Sentiment Analysis', content: 'Identified negative feedback trends with 91% accuracy' },
+            { title: 'Lead Prioritization', content: 'Prioritized high-value leads with ~50% and higher conversion rates' },
+            { title: 'Engagement Optimization', content: 'Improved engagement timing to know when to reach out to these high-value leads' }
+          ].map((achievement, index) => (
+            <Grid item xs={12} md={4} key={index}>
+              <Card sx={{ height: '100%', backgroundColor: '#1D2D44' }}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {achievement.title}
+                  </Typography>
+                  <Typography variant="body2">
+                    {achievement.content}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Model Flow Timeline */}
+        <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44' }}>
+          <Typography variant="h6" gutterBottom>
+            Model Integration Flow
+          </Typography>
+          <Timeline position="alternate">
+            <TimelineItem>
+              <TimelineSeparator>
+                <TimelineDot sx={{ backgroundColor: '#4CAF50' }} />
+                <TimelineConnector sx={{ height: 80 }} />
+              </TimelineSeparator>
+              <TimelineContent>
+                <Typography variant="h6">Sentiment Analysis</Typography>
+                <Typography>Customer feedback processing and sentiment scoring</Typography>
+              </TimelineContent>
+            </TimelineItem>
+            <TimelineItem>
+              <TimelineSeparator>
+                <TimelineDot sx={{ backgroundColor: '#FFC107' }} />
+                <TimelineConnector sx={{ height: 80 }} />
+              </TimelineSeparator>
+              <TimelineContent>
+                <Typography variant="h6">Lead Scoring</Typography>
+                <Typography>Conversion probability assessment using sentiment data</Typography>
+              </TimelineContent>
+            </TimelineItem>
+            <TimelineItem>
+              <TimelineSeparator>
+                <TimelineDot sx={{ backgroundColor: '#F44336' }} />
+              </TimelineSeparator>
+              <TimelineContent>
+                <Typography variant="h6">Outreach Optimization</Typography>
+                <Typography>Timing recommendations for high-potential leads</Typography>
+              </TimelineContent>
+            </TimelineItem>
+          </Timeline>
+        </Paper>
+
+        {/* Business Value Summary */}
+        <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44', textAlign: 'center' }}>
+          <Typography variant="h6" gutterBottom>
+            Business Impact
+          </Typography>
+          <Typography variant="body1">
+            Together, our models streamlined customer engagement, enabling data-driven decisions 
+            that improved lead conversion efficiency and customer satisfaction rates.
+          </Typography>
+        </Paper>
       </section>
 
       <Grid container spacing={4}>

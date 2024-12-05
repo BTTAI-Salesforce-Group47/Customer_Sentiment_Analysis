@@ -47,7 +47,7 @@ const ComingSoon = () => {
         Coming Soon
       </Typography>
       <Typography variant="body1" paragraph>
-        We're working on exciting new features to help you analyze your own data.
+        We're looking to work on personalization features to deliver insights tailored to custom business data.
       </Typography>
 
       <Grid container spacing={4}>
@@ -57,7 +57,7 @@ const ComingSoon = () => {
               Upload Your Data
             </Typography>
             <Typography variant="body2" paragraph color="text.secondary">
-              Soon you'll be able to upload your own customer feedback data and get instant insights.
+              Soon you'll be able to upload your own data and see insights tailored to your business.
             </Typography>
             
             <Box
@@ -114,20 +114,16 @@ const ComingSoon = () => {
             <Box sx={{ mt: 2 }}>
               {[
                 {
-                  title: 'Custom Data Analysis',
-                  description: 'Upload your own customer feedback data and get instant sentiment analysis and insights.'
+                  title: 'Personalized Insights',
+                  description: 'Get custom analytics and recommendations specifically designed for your business needs.'
                 },
                 {
-                  title: 'Real-time Processing',
-                  description: 'Connect your feedback channels for real-time sentiment analysis and trend detection.'
+                  title: 'Real-time Model Integration',
+                  description: 'Connect directly to our ML models for instant analysis and continuous learning from your data.'
                 },
                 {
-                  title: 'Advanced Visualizations',
-                  description: 'Create custom dashboards and export detailed reports of your analysis.'
-                },
-                {
-                  title: 'API Integration',
-                  description: 'Integrate our sentiment analysis directly into your existing systems.'
+                  title: 'Advanced Visualization Studio',
+                  description: 'Create and customize interactive dashboards that highlight the metrics that matter most to you.'
                 }
               ].map((feature, index) => (
                 <Box key={index} sx={{ mb: 3 }}>
