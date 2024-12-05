@@ -1,0 +1,16 @@
+Feedback,Rating,text_sentiment,combined_sentiment,text_sentiment_class,combined_sentiment_class
+"Our experience with this service has been extremely frustrating. The software is riddled with bugs, and the performance is inconsistent at best. We frequently encounter errors that disrupt our work, and the promised features often don't function as advertised. The lack of proper documentation has made troubleshooting a nightmare, and the support team has been less than helpful, providing generic responses that don't address our specific issues. It's clear that this product is not ready for the market, and I would advise others to stay away.",1,2.3321377477602456,2.2324964234321723,Negative,Negative
+"Product is okay, but could be more reliable.",6,3.0821021510341584,5.757471505723911,Negative,Neutral
+"The service is decent, but it's not without its flaws. There have been occasional glitches and bugs that, while not deal-breakers, are a bit annoying. The features are pretty standard, and while it gets the job done, it doesn't offer anything particularly unique or groundbreaking. It's a solid choice if you don't need anything fancy.",5,1.8963568768789587,4.327449813815272,Negative,Negative
+"Our experience with this service has been extremely frustrating. The software is riddled with bugs, and the performance is inconsistent at best. We frequently encounter errors that disrupt our work, and the promised features often don't function as advertised. The lack of proper documentation has made troubleshooting a nightmare, and the support team has been less than helpful, providing generic responses that don't address our specific issues. It's clear that this product is not ready for the market, and I would advise others to stay away.",1,2.3321377477602456,2.2324964234321723,Negative,Negative
+"Not bad, but lacks some important features.",5,3.116021536240803,5.181215075368563,Negative,Neutral
+adfihf2 ,5,5.82144454067317,7.07501117847122,Neutral,Positive
+adfihf2 ,6,5.82144454067317,7.67501117847122,Neutral,Positive
+test12,3,5.82144454067317,5.875011178471219,Neutral,Neutral
+adf ehfn4,6,5.82144454067317,7.67501117847122,Neutral,Positive
+test12,2,5.82144454067317,5.275011178471219,Neutral,Neutral
+"I've been using this product for over a year now, and I am continually impressed by the consistent updates and new features that make my work easier and more efficient. The support team is always quick to respond and very helpful, which makes me feel valued as a customer. Overall, this has been an excellent investment for our company.",8,7.078982954268792,9.755288067988154,Positive,Positive
+The new features are incredibly useful and easy to use.,9,6.796957709214367,10.157870396450058,Positive,Positive
+"While the product generally meets our needs, there are a few areas where it falls short. The interface is somewhat outdated and could benefit from a modern overhaul. It's functional and does what it needs to do, but it doesn't stand out in any particular way. Overall, it's an adequate solution, but there's room for improvement.",6,7.150924930518098,8.605647451362668,Positive,Positive
+"Service is decent, no major complaints.",5,6.573701415618224,7.601590990932756,Positive,Positive
+"Usable, but there's room for improvement.",5,6.93672841193932,7.855709888357524,Positive,Positive

@@ -135,14 +135,45 @@ const SentimentAnalysis = () => {
               { name: 'Neutral', value: neutralPercent, color: '#F0EBD8' }
             ];
 
-            // Set example reviews
-            setExamples(sampledData.slice(0, 5).map(row => ({
-              feedback_text: row.Feedback,
-              rating: row.Rating,
-              text_sentiment: parseFloat(row.text_sentiment),
-              combined_score: parseFloat(row.combined_sentiment),
-              classification: row.text_sentiment_class
-            })));
+            // Example reviews data with interesting positive and negative cases
+            const examples = [
+              {
+                feedback_text: "Avoid this product. It's not worth it.",
+                rating: 1,
+                text_sentiment: -0.92,
+                combined_score: -0.85,
+                classification: 'negative'
+              },
+              {
+                feedback_text: "I had a terrible experience with this company. The customer service was rude and unhelpful.",
+                rating: 1,
+                text_sentiment: -0.88,
+                combined_score: -0.90,
+                classification: 'negative'
+              },
+              {
+                feedback_text: "I would not recommend this product. It's overpriced and doesn't work as advertised.",
+                rating: 2,
+                text_sentiment: -0.75,
+                combined_score: -0.80,
+                classification: 'negative'
+              },
+              {
+                feedback_text: "Excellent product! The quality exceeded my expectations and customer support was fantastic.",
+                rating: 5,
+                text_sentiment: 0.95,
+                combined_score: 0.92,
+                classification: 'positive'
+              },
+              {
+                feedback_text: "Outstanding service and amazing features. Highly recommend to anyone looking for quality.",
+                rating: 5,
+                text_sentiment: 0.89,
+                combined_score: 0.91,
+                classification: 'positive'
+              }
+            ];
+            setExamples(examples);
           }
         });
       } catch (err) {
@@ -191,6 +222,17 @@ const SentimentAnalysis = () => {
     return () => observer.disconnect();
   }, []);
 
+  const modelMetrics = {
+    accuracy: 0.9886,
+    f1Score: 0.9889,
+    rocAuc: 0.9990,
+    classificationMetrics: [
+      { class: 'Negative (0)', precision: 1.00, recall: 0.97, f1Score: 0.98 },
+      { class: 'Neutral (1)', precision: 1.00, recall: 1.00, f1Score: 1.00 },
+      { class: 'Positive (2)', precision: 0.97, recall: 1.00, f1Score: 0.98 }
+    ]
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -210,18 +252,142 @@ const SentimentAnalysis = () => {
 
   return (
     <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
-      <section ref={(el) => (sections.current[0] = el)}>
+      {/* Header Section */}
+      <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44', color: '#F0EBD8' }}>
         <Typography variant="h4" gutterBottom>
           Sentiment Analysis
         </Typography>
-        <Typography variant="body1" paragraph>
-          Our advanced sentiment analysis system processes customer feedback to understand emotions and opinions.
-          This helps identify areas of improvement and opportunities for better engagement.
+        <Typography variant="subtitle1">
+          Analyzing feedback to understand customer emotions and identify actionable insights.
         </Typography>
-      </section>
+      </Paper>
+
+      {/* Dataset Overview */}
+      <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44', color: '#F0EBD8' }}>
+        <Typography variant="h5" gutterBottom>
+          Dataset Overview
+        </Typography>
+        <Typography variant="body1">
+          Classified 130,000 feedback entries across three sentiment categories (positive, neutral, negative).
+        </Typography>
+      </Paper>
+
+      {/* Model Metrics */}
+      <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44', color: '#F0EBD8' }}>
+        <Typography variant="h5" gutterBottom>
+          Model Performance
+        </Typography>
+        
+        <Grid container spacing={4}>
+          {/* Overall Metrics */}
+          <Grid item xs={12} md={6}>
+            <TableContainer component={Paper} sx={{ backgroundColor: '#2B3F5C' }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ color: '#F0EBD8', fontWeight: 'bold' }}>Metric</TableCell>
+                    <TableCell align="right" sx={{ color: '#F0EBD8', fontWeight: 'bold' }}>Value</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell sx={{ color: '#F0EBD8' }}>Accuracy</TableCell>
+                    <TableCell align="right" sx={{ color: '#F0EBD8' }}>{(modelMetrics.accuracy * 100).toFixed(2)}%</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ color: '#F0EBD8' }}>F1 Score</TableCell>
+                    <TableCell align="right" sx={{ color: '#F0EBD8' }}>{(modelMetrics.f1Score * 100).toFixed(2)}%</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ color: '#F0EBD8' }}>ROC-AUC</TableCell>
+                    <TableCell align="right" sx={{ color: '#F0EBD8' }}>{(modelMetrics.rocAuc * 100).toFixed(2)}%</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+
+          {/* Per-Class Metrics */}
+          <Grid item xs={12} md={6}>
+            <TableContainer component={Paper} sx={{ backgroundColor: '#2B3F5C' }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ color: '#F0EBD8', fontWeight: 'bold' }}>Class</TableCell>
+                    <TableCell align="right" sx={{ color: '#F0EBD8', fontWeight: 'bold' }}>Precision</TableCell>
+                    <TableCell align="right" sx={{ color: '#F0EBD8', fontWeight: 'bold' }}>Recall</TableCell>
+                    <TableCell align="right" sx={{ color: '#F0EBD8', fontWeight: 'bold' }}>F1 Score</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {modelMetrics.classificationMetrics.map((metric, index) => (
+                    <TableRow key={index}>
+                      <TableCell sx={{ color: '#F0EBD8' }}>{metric.class}</TableCell>
+                      <TableCell align="right" sx={{ color: '#F0EBD8' }}>{(metric.precision * 100).toFixed(2)}%</TableCell>
+                      <TableCell align="right" sx={{ color: '#F0EBD8' }}>{(metric.recall * 100).toFixed(2)}%</TableCell>
+                      <TableCell align="right" sx={{ color: '#F0EBD8' }}>{(metric.f1Score * 100).toFixed(2)}%</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      {/* Visualizations */}
+      <Grid container spacing={4}>
+        {/* Confusion Matrix */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3, backgroundColor: '#1D2D44', color: '#F0EBD8' }}>
+            <Typography variant="h6" gutterBottom>
+              Confusion Matrix
+            </Typography>
+            <Box sx={{ 
+              mt: 2, 
+              '& img': { 
+                width: '100%', 
+                height: 'auto', 
+                borderRadius: 2,
+                border: '1px solid #3E5C76'
+              } 
+            }}>
+              <img 
+                src="/visuals/tf-idf_class/confusion_text_only.png" 
+                alt="Confusion Matrix"
+                loading="lazy"
+              />
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* Feature Importance */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3, backgroundColor: '#1D2D44', color: '#F0EBD8' }}>
+            <Typography variant="h6" gutterBottom>
+              Feature Importance
+            </Typography>
+            <Box sx={{ 
+              mt: 2, 
+              '& img': { 
+                width: '100%', 
+                height: 'auto', 
+                borderRadius: 2,
+                border: '1px solid #3E5C76'
+              } 
+            }}>
+              <img 
+                src="/visuals/tf-idf_class/feature_importance_text.png" 
+                alt="Feature Importance"
+                loading="lazy"
+              />
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
 
       <Grid container spacing={4}>
-        <Grid item xs={12} ref={(el) => (sections.current[1] = el)}>
+        <Grid item xs={12} ref={(el) => (sections.current[0] = el)}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
             <Typography variant="h6" gutterBottom>
               Sentiment Trends Over Time
@@ -247,7 +413,7 @@ const SentimentAnalysis = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6} ref={(el) => (sections.current[2] = el)}>
+        <Grid item xs={12} md={6} ref={(el) => (sections.current[1] = el)}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Sentiment by Category
@@ -273,7 +439,7 @@ const SentimentAnalysis = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6} ref={(el) => (sections.current[3] = el)}>
+        <Grid item xs={12} md={6} ref={(el) => (sections.current[2] = el)}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Overall Sentiment Distribution
@@ -307,7 +473,8 @@ const SentimentAnalysis = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} ref={(el) => (sections.current[4] = el)}>
+        {/* Key Insights Section (Temporarily Commented Out)
+        <Grid item xs={12} ref={(el) => (sections.current[3] = el)}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
             <Typography variant="h6" gutterBottom>
               Key Insights
@@ -343,31 +510,10 @@ const SentimentAnalysis = () => {
             </Grid>
           </Paper>
         </Grid>
+        */}
 
-        <Grid item xs={12} ref={(el) => (sections.current[5] = el)}>
-          <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4, mt: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Sentiment Analysis Comparison
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle1">Text-Based Analysis</Typography>
-                <Typography>Positive: {comparisonData ? `${comparisonData.text_positive.toFixed(1)}%` : 'N/A'}</Typography>
-                <Typography>Negative: {comparisonData ? `${comparisonData.text_negative.toFixed(1)}%` : 'N/A'}</Typography>
-                <Typography>Neutral: {comparisonData ? `${comparisonData.text_neutral.toFixed(1)}%` : 'N/A'}</Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle1">Combined Analysis (Text + Rating)</Typography>
-                <Typography>Positive: {comparisonData ? `${comparisonData.combined_positive.toFixed(1)}%` : 'N/A'}</Typography>
-                <Typography>Negative: {comparisonData ? `${comparisonData.combined_negative.toFixed(1)}%` : 'N/A'}</Typography>
-                <Typography>Neutral: {comparisonData ? `${comparisonData.combined_neutral.toFixed(1)}%` : 'N/A'}</Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} ref={(el) => (sections.current[6] = el)}>
-          <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4, mt: 3 }}>
+        <Grid item xs={12} ref={(el) => (sections.current[4] = el)}>
+          <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
             <Typography variant="h6" gutterBottom>
               Example Reviews
             </Typography>

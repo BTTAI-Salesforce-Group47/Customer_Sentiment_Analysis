@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, Grid, Paper, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Assessment, Business, Timeline, Upload } from '@mui/icons-material';
+import { ReactFlow, Background } from 'reactflow';
+import 'reactflow/dist/style.css';
 
 const StartHere = () => {
   const navigate = useNavigate();
@@ -22,6 +24,26 @@ const StartHere = () => {
       content: 'Start with the Data Overview to understand our dataset, then explore Business Overview for context. View Analytics for a detailed look at our models and results.',
       icon: <Timeline sx={{ fontSize: 40, color: '#748CAB' }} />
     }
+  ];
+
+  // Flow diagram nodes
+  const nodes = [
+    // Data Source Nodes
+    { id: '1', position: { x: 50, y: 50 }, data: { label: 'Feedback Data' }, type: 'input', style: { background: '#bbdefb' } },
+    { id: '2', position: { x: 50, y: 150 }, data: { label: 'Leads Data' }, type: 'input', style: { background: '#bbdefb' } },
+    { id: '3', position: { x: 50, y: 250 }, data: { label: 'Availability Data' }, type: 'input', style: { background: '#bbdefb' } },
+    
+    // Model Nodes
+    { id: '4', position: { x: 300, y: 50 }, data: { label: 'Sentiment Analysis\n(99% accuracy)' }, style: { background: '#c8e6c9' } },
+    { id: '5', position: { x: 300, y: 150 }, data: { label: 'Lead Scoring' }, style: { background: '#c8e6c9' } },
+    { id: '6', position: { x: 300, y: 250 }, data: { label: 'Outreach Prediction\n(91% accuracy)' }, style: { background: '#c8e6c9' } },
+  ];
+
+  // Flow diagram edges
+  const edges = [
+    { id: 'e1-4', source: '1', target: '4', animated: true },
+    { id: 'e2-5', source: '2', target: '5', animated: true },
+    { id: 'e3-6', source: '3', target: '6', animated: true },
   ];
 
   return (
@@ -97,7 +119,7 @@ const StartHere = () => {
                     2. Analyze Insights
                   </Typography>
                   <Typography variant="body2" paragraph>
-                    Take a closer look at our variousmodels and results:
+                    Take a closer look at our various models and results:
                   </Typography>
                   <Button 
                     variant="contained" 
@@ -118,9 +140,69 @@ const StartHere = () => {
             </Grid>
           </Paper>
         </Grid>
+
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44', color: '#F0EBD8' }}>
+            <Typography variant="h5" gutterBottom>
+              Model Overview
+            </Typography>
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={4}>
+                <Paper sx={{ p: 2, height: '100%', backgroundColor: '#2B3F5C' }}>
+                  <Typography variant="h6" gutterBottom>
+                    Sentiment Analysis
+                  </Typography>
+                  <Typography variant="body1">
+                    Classifying customer reviews to better understand their sentiment towards a product (99% accuracy).
+                  </Typography>
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12} md={4}>
+                <Paper sx={{ p: 2, height: '100%', backgroundColor: '#2B3F5C' }}>
+                  <Typography variant="h6" gutterBottom>
+                    Lead Scoring
+                  </Typography>
+                  <Typography variant="body1">
+                    Prioritizing high-value leads for conversion.
+                  </Typography>
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12} md={4}>
+                <Paper sx={{ p: 2, height: '100%', backgroundColor: '#2B3F5C' }}>
+                  <Typography variant="h6" gutterBottom>
+                    Outreach Prediction
+                  </Typography>
+                  <Typography variant="body1">
+                    Optimizing engagement timing for maximum impact (91% accuracy).
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3, mb: 4, backgroundColor: '#1D2D44', color: '#F0EBD8' }}>
+            <Typography variant="h5" gutterBottom>
+              Data Flow
+            </Typography>
+            <Box sx={{ height: '400px', backgroundColor: '#2B3F5C', borderRadius: 1 }}>
+              <ReactFlow 
+                nodes={nodes}
+                edges={edges}
+                fitView
+              >
+                <Background />
+              </ReactFlow>
+            </Box>
+          </Paper>
+        </Grid>
       </Grid>
     </Box>
   );
 };
 
-export default StartHere; 
+export default StartHere;
