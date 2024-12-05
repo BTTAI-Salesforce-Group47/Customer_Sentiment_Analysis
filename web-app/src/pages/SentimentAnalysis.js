@@ -128,48 +128,76 @@ const SentimentAnalysis = () => {
               combined_neutral: neutralPercent
             });
 
-            // Update pie chart data
+            //  pie chart data from sentiment analysis stats
             const pieData = [
-              { name: 'Positive', value: positivePercent, color: '#748CAB' },
-              { name: 'Negative', value: negativePercent, color: '#3E5C76' },
-              { name: 'Neutral', value: neutralPercent, color: '#F0EBD8' }
+              { name: 'Positive', value: 80161, color: '#748CAB' },
+              { name: 'Neutral', value: 33989, color: '#F0EBD8' },
+              { name: 'Negative', value: 19074, color: '#3E5C76' }
             ];
 
-            // Example reviews data with interesting positive and negative cases
+            //  example reviews data from sample_reviews.csv
             const examples = [
               {
-                feedback_text: "Avoid this product. It's not worth it.",
+                feedback_text: "Our experience with this service has been extremely frustrating. The software is riddled with bugs, and the performance is inconsistent at best. We frequently encounter errors that disrupt our work, and the promised features often don't function as advertised. The lack of proper documentation has made troubleshooting a nightmare, and the support team has been less than helpful, providing generic responses that don't address our specific issues. It's clear that this product is not ready for the market, and I would advise others to stay away.",
                 rating: 1,
-                text_sentiment: -0.92,
-                combined_score: -0.85,
+                text_sentiment: 2.33,
+                combined_score: 2.23,
                 classification: 'negative'
               },
               {
-                feedback_text: "I had a terrible experience with this company. The customer service was rude and unhelpful.",
-                rating: 1,
-                text_sentiment: -0.88,
-                combined_score: -0.90,
-                classification: 'negative'
+                feedback_text: "Product is okay, but could be more reliable.",
+                rating: 6,
+                text_sentiment: 3.08,
+                combined_score: 5.76,
+                classification: 'neutral'
               },
               {
-                feedback_text: "I would not recommend this product. It's overpriced and doesn't work as advertised.",
-                rating: 2,
-                text_sentiment: -0.75,
-                combined_score: -0.80,
-                classification: 'negative'
-              },
-              {
-                feedback_text: "Excellent product! The quality exceeded my expectations and customer support was fantastic.",
+                feedback_text: "The service is decent, but it's not without its flaws. There have been occasional glitches and bugs that, while not deal-breakers, are a bit annoying. The features are pretty standard, and while it gets the job done, it doesn't offer anything particularly unique or groundbreaking. It's a solid choice if you don't need anything fancy.",
                 rating: 5,
-                text_sentiment: 0.95,
-                combined_score: 0.92,
+                text_sentiment: 1.90,
+                combined_score: 4.33,
+                classification: 'negative'
+              },
+              {
+                feedback_text: "Not bad, but lacks some important features.",
+                rating: 5,
+                text_sentiment: 3.12,
+                combined_score: 5.18,
+                classification: 'neutral'
+              },
+              {
+                feedback_text: "I've been using this product for over a year now, and I am continually impressed by the consistent updates and new features that make my work easier and more efficient. The support team is always quick to respond and very helpful, which makes me feel valued as a customer. Overall, this has been an excellent investment for our company.",
+                rating: 8,
+                text_sentiment: 7.08,
+                combined_score: 9.76,
                 classification: 'positive'
               },
               {
-                feedback_text: "Outstanding service and amazing features. Highly recommend to anyone looking for quality.",
+                feedback_text: "The new features are incredibly useful and easy to use.",
+                rating: 9,
+                text_sentiment: 6.80,
+                combined_score: 10.16,
+                classification: 'positive'
+              },
+              {
+                feedback_text: "While the product generally meets our needs, there are a few areas where it falls short. The interface is somewhat outdated and could benefit from a modern overhaul. It's functional and does what it needs to do, but it doesn't stand out in any particular way. Overall, it's an adequate solution, but there's room for improvement.",
+                rating: 6,
+                text_sentiment: 7.15,
+                combined_score: 8.61,
+                classification: 'positive'
+              },
+              {
+                feedback_text: "Service is decent, no major complaints.",
                 rating: 5,
-                text_sentiment: 0.89,
-                combined_score: 0.91,
+                text_sentiment: 6.57,
+                combined_score: 7.60,
+                classification: 'positive'
+              },
+              {
+                feedback_text: "Usable, but there's room for improvement.",
+                rating: 5,
+                text_sentiment: 6.94,
+                combined_score: 7.86,
                 classification: 'positive'
               }
             ];
@@ -187,12 +215,18 @@ const SentimentAnalysis = () => {
     loadData();
   }, []);
 
-  // Update pie chart data based on comparison data
-  const pieData = comparisonData ? [
-    { name: 'Positive', value: comparisonData.text_positive, color: '#748CAB' },
-    { name: 'Negative', value: comparisonData.text_negative, color: '#3E5C76' },
-    { name: 'Neutral', value: comparisonData.text_neutral, color: '#F0EBD8' },
-  ] : [];
+  // // Update pie chart data based on comparison data
+  // const pieData = comparisonData ? [
+  //   { name: 'Positive', value: comparisonData.text_positive, color: '#748CAB' },
+  //   { name: 'Negative', value: comparisonData.text_negative, color: '#3E5C76' },
+  //   { name: 'Neutral', value: comparisonData.text_neutral, color: '#F0EBD8' },
+  // ] : [];
+
+  const pieData = [
+    { name: 'Positive', value: 80161, color: '#748CAB' },
+    { name: 'Neutral', value: 33989, color: '#F0EBD8' },
+    { name: 'Negative', value: 19074, color: '#3E5C76' }
+  ];
 
   useEffect(() => {
     const observerOptions = {
@@ -250,6 +284,13 @@ const SentimentAnalysis = () => {
     );
   }
 
+  // Sort the sentimentByCategory data by  sum
+  const sortedSentimentByCategory = [...sentimentByCategory].sort((a, b) => {
+    const totalA = a.positive + a.negative;
+    const totalB = b.positive + b.negative;
+    return totalA - totalB;
+  });
+
   return (
     <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
       {/* Header Section */}
@@ -258,7 +299,9 @@ const SentimentAnalysis = () => {
           Sentiment Analysis
         </Typography>
         <Typography variant="subtitle1">
-          Analyzing feedback to understand customer emotions and identify actionable insights.
+          We trained a sentiment analysis model to classify feedback into positive, neutral, or negative categories, 
+          using TF-IDF for feature extraction and random forest for classification. Take a look at the model's performance 
+          and the results of the analysis below.
         </Typography>
       </Paper>
 
@@ -386,7 +429,9 @@ const SentimentAnalysis = () => {
         </Grid>
       </Grid>
 
+
       <Grid container spacing={4}>
+        {/*
         <Grid item xs={12} ref={(el) => (sections.current[0] = el)}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
             <Typography variant="h6" gutterBottom>
@@ -412,14 +457,20 @@ const SentimentAnalysis = () => {
             </ResponsiveContainer>
           </Paper>
         </Grid>
-
+*/}
+        <Grid item xs={12}>
+          <Typography variant="h5" gutterBottom sx={{ color: '#F0EBD8', mt: 4, mb: 2 }}>
+            Insights
+          </Typography>
+        </Grid>
+        
         <Grid item xs={12} md={6} ref={(el) => (sections.current[1] = el)}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Sentiment by Category
+              Sentiment by Company
             </Typography>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={sentimentByCategory}>
+              <BarChart data={sortedSentimentByCategory}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#3E5C76" opacity={0.3} />
                 <XAxis dataKey="name" stroke="#F0EBD8" />
                 <YAxis stroke="#F0EBD8" />
