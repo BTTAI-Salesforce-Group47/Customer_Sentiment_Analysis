@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, Paper, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import { 
+import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, ScatterChart, Scatter
 } from 'recharts';
@@ -20,7 +20,7 @@ const DataOverview = () => {
         const availabilityResponse = await fetch('/datasets/AvailabilityData.csv');
         const availabilityText = await availabilityResponse.text();
         console.log('Raw Availability Data:', availabilityText.slice(0, 200)); // Show first 200 chars
-        
+
         Papa.parse(availabilityText, {
           header: true,
           complete: (results) => {
@@ -42,7 +42,7 @@ const DataOverview = () => {
         const companyResponse = await fetch('/datasets/CompanyDetails.csv');
         const companyText = await companyResponse.text();
         console.log('Raw Company Data:', companyText.slice(0, 200)); // Show first 200 chars
-        
+
         Papa.parse(companyText, {
           header: true,
           complete: (results) => {
@@ -57,7 +57,7 @@ const DataOverview = () => {
                 });
               }
             });
-            
+
             // Transform to chart format
             const transformedRegionData = Object.entries(regionCounts)
               .map(([region, companies]) => ({
@@ -65,7 +65,7 @@ const DataOverview = () => {
                 companies
               }))
               .filter(item => item.region && item.companies); // Remove any empty entries
-            
+
             console.log('Transformed Region Data:', transformedRegionData); // Show all region data
             setRegionData(transformedRegionData);
           }
@@ -75,7 +75,7 @@ const DataOverview = () => {
         const feedbackResponse = await fetch('/datasets/FeedbackData.csv');
         const feedbackText = await feedbackResponse.text();
         console.log('Raw Feedback Data:', feedbackText.slice(0, 200)); // Show first 200 chars
-        
+
         Papa.parse(feedbackText, {
           header: true,
           complete: (results) => {
@@ -100,7 +100,7 @@ const DataOverview = () => {
         // Load leads data
         const leadsResponse = await fetch('/datasets/LeadsData.csv');
         const leadsText = await leadsResponse.text();
-        
+
         Papa.parse(leadsText, {
           header: true,
           complete: (results) => {
@@ -125,7 +125,7 @@ const DataOverview = () => {
       </Typography>
 
       <Grid container spacing={4}>
-        
+
         {/* Feedback Data Section */}
         <Grid item xs={12}>
           <Paper sx={{ p: 3, backgroundColor: '#1D2D44', borderRadius: 4 }}>
@@ -133,17 +133,17 @@ const DataOverview = () => {
               Feedback Data
             </Typography>
             <Typography variant="body2" paragraph>
-              Analysis of 130,000 customer feedback entries. The dataset includes Date, CustomerID, 
+              Analysis of 130,000 customer feedback entries. The dataset includes Date, CustomerID,
               Rating (1-5), Category (Product/Service/Support), and Comments.
             </Typography>
-            
+
             {/* Sample Data Table */}
             <Box sx={{ mb: 3, overflowX: 'auto' }}>
               <Typography variant="subtitle2" gutterBottom sx={{ color: '#F0EBD8' }}>
                 Sample Feedback Entries: {feedbackData.length ? `(${feedbackData.length} entries loaded)` : '(No data loaded)'}
               </Typography>
-              <Table size="small" sx={{ 
-                '& .MuiTableCell-root': { 
+              <Table size="small" sx={{
+                '& .MuiTableCell-root': {
                   color: '#F0EBD8',
                   borderColor: '#3E5C76'
                 },
@@ -159,10 +159,10 @@ const DataOverview = () => {
                   </TableRow>
                 </TableHead>
               </Table>
-              <Box component="img" 
-                src="/datasets/feedbackdata.png" 
+              <Box component="img"
+                src="/datasets/feedbackdata.png"
                 alt="Feedback Data"
-                sx={{ 
+                sx={{
                   width: '100%',
                   mt: 1,
                   borderRadius: 1,
@@ -171,11 +171,11 @@ const DataOverview = () => {
               />
             </Box>
 
-      
+
           </Paper>
         </Grid>
 
-        
+
 
         {/* Leads Data Section */}
         <Grid item xs={12}>
@@ -184,16 +184,16 @@ const DataOverview = () => {
               Leads Data
             </Typography>
             <Typography variant="body2" paragraph>
-              Collection of 1,276 sales leads with their current status. The dataset includes Company Name, Status, LeadId, 
+              Collection of 1,276 sales leads with their current status. The dataset includes Company Name, Status, LeadId,
               Date, and Contact Email.
             </Typography>
-            
+
             <Box sx={{ mb: 3, overflowX: 'auto' }}>
               <Typography variant="subtitle2" gutterBottom sx={{ color: '#F0EBD8' }}>
                 Sample Lead Entries: {leadsData.length ? `(${leadsData.length} entries loaded)` : '(No data loaded)'}
               </Typography>
-              <Table size="small" sx={{ 
-                '& .MuiTableCell-root': { 
+              <Table size="small" sx={{
+                '& .MuiTableCell-root': {
                   color: '#F0EBD8',
                   borderColor: '#3E5C76'
                 },
@@ -209,10 +209,10 @@ const DataOverview = () => {
                   </TableRow>
                 </TableHead>
               </Table>
-              <Box component="img" 
-                src="/datasets/leadsdata.png" 
+              <Box component="img"
+                src="/datasets/leadsdata.png"
                 alt="Leads Data"
-                sx={{ 
+                sx={{
                   width: '100%',
                   mt: 1,
                   borderRadius: 1,
@@ -230,16 +230,16 @@ const DataOverview = () => {
               Availability Data
             </Typography>
             <Typography variant="body2" paragraph>
-              System availability metrics across 169 days. The dataset tracks Downtime Duration, Affected Customers, 
+              System availability metrics across 169 days. The dataset tracks Downtime Duration, Affected Customers,
               and Impacted Regions.
             </Typography>
-            
+
             <Box sx={{ mb: 3, overflowX: 'auto' }}>
               <Typography variant="subtitle2" gutterBottom sx={{ color: '#F0EBD8' }}>
                 Sample Availability Records: {availabilityData.length ? `(${availabilityData.length} entries loaded)` : '(No data loaded)'}
               </Typography>
-              <Table size="small" sx={{ 
-                '& .MuiTableCell-root': { 
+              <Table size="small" sx={{
+                '& .MuiTableCell-root': {
                   color: '#F0EBD8',
                   borderColor: '#3E5C76'
                 },
@@ -254,10 +254,10 @@ const DataOverview = () => {
                   </TableRow>
                 </TableHead>
               </Table>
-              <Box component="img" 
-                src="/datasets/availabilitydata.png" 
+              <Box component="img"
+                src="/datasets/availabilitydata.png"
                 alt="Availability Data"
-                sx={{ 
+                sx={{
                   width: '100%',
                   mt: 1,
                   borderRadius: 1,
@@ -275,16 +275,16 @@ const DataOverview = () => {
               Company Details
             </Typography>
             <Typography variant="body2" paragraph>
-              Detailed information on 3,793 companies including employee counts and regions served. Essential for 
+              Detailed information on 3,793 companies including employee counts and regions served. Essential for
               market analysis and segmentation.
             </Typography>
-            
+
             <Box sx={{ mb: 3, overflowX: 'auto' }}>
               <Typography variant="subtitle2" gutterBottom sx={{ color: '#F0EBD8' }}>
                 Sample Company Records: {companyData.length ? `(${companyData.length} entries loaded)` : '(No data loaded)'}
               </Typography>
-              <Table size="small" sx={{ 
-                '& .MuiTableCell-root': { 
+              <Table size="small" sx={{
+                '& .MuiTableCell-root': {
                   color: '#F0EBD8',
                   borderColor: '#3E5C76'
                 },
@@ -298,10 +298,10 @@ const DataOverview = () => {
                   </TableRow>
                 </TableHead>
               </Table>
-              <Box component="img" 
-                src="/datasets/companydetails.png" 
+              <Box component="img"
+                src="/datasets/companydetails.png"
                 alt="Company Details"
-                sx={{ 
+                sx={{
                   width: '100%',
                   mt: 1,
                   borderRadius: 1,
