@@ -6,8 +6,8 @@ import {
   Business as BusinessIcon,
   Timeline as TimelineIcon,
   Group as LeadsIcon,
-  ExpandLess,
-  ExpandMore,
+  ChevronLeft,
+  ChevronRight,
   Assessment as AssessmentIcon,
   Schedule,
   Home as HomeIcon,
@@ -65,7 +65,7 @@ const Navigation = () => {
         {/* Collapse/Expand Button */}
         <ListItem button onClick={() => setIsCollapsed(!isCollapsed)} sx={{ justifyContent: 'flex-end', py: 1 }}>
           <ListItemIcon sx={{ color: '#F0EBD8', minWidth: 'auto' }}>
-            {isCollapsed ? <ExpandMore /> : <ExpandLess />}
+            {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
           </ListItemIcon>
         </ListItem>
         {menuItems.map((item) => (
@@ -85,7 +85,7 @@ const Navigation = () => {
                 {!isCollapsed && (
                   <>
                     <ListItemText primary={item.text} />
-                    {openAnalytics ? <ExpandLess /> : <ExpandMore />}
+                    {openAnalytics ? <ChevronLeft /> : <ChevronRight />}
                   </>
                 )}
               </ListItem>
